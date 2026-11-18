@@ -1,0 +1,3437 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ola ♥</title>
+
+    <style>
+
+:root {
+    color-scheme: dark;
+    --ink: #09030a;
+    --ink-soft: #160713;
+    --plum: #321027;
+    --pink-light: #ffd0e2;
+    --pink: #ff69b4;
+    --pink-hot: #ff2f92;
+    --pink-deep: #b51d68;
+    --rose-glass: rgba(255, 105, 180, .14);
+    --gold: #ffd98a;
+    --white: #fff8fc;
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+    --ease-spring: cubic-bezier(.2, 1.35, .4, 1);
+    --frame-radius: 30px;
+    --frame-width:  min( min(440px, 90vw), 100% );
+    --frame-height: min(580px, 84vh);
+    --shadow-deep: 0 32px 90px rgba(0,0,0,.72);
+    --shadow-pink: 0 0 70px rgba(255,47,146,.22);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { min-height: 100%; background: var(--ink); }
+body {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+    color: var(--white);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+        radial-gradient(ellipse at 50% 42%, rgba(111,20,72,.42), transparent 48%),
+        radial-gradient(ellipse at 12% 90%, rgba(255,47,146,.12), transparent 36%),
+        radial-gradient(ellipse at 90% 8%, rgba(255,217,138,.08), transparent 30%),
+        linear-gradient(145deg, #10050e 0%, #09030a 55%, #160611 100%);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+body::before, body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+body::before {
+    opacity: .55;
+    background-image: radial-gradient(rgba(255,220,238,.22) .65px, transparent .65px);
+    background-size: 34px 34px;
+    mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 75%, transparent);
+}
+body::after {
+    box-shadow: inset 0 0 18vw rgba(0,0,0,.62);
+    background: linear-gradient(115deg, rgba(255,255,255,.018), transparent 35%, transparent 70%, rgba(255,105,180,.025));
+}
+#bg-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+#envelope-container {
+    position: absolute;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .8s var(--ease-spring), opacity .7s ease, filter .7s ease;
+    filter: drop-shadow(0 24px 45px rgba(255,47,146,.16));
+}
+#envelope-container:hover { transform: translateY(-9px) scale(1.045); }
+#envelope-container:active { transform: translateY(-2px) scale(.985); }
+.envelope {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 360px;
+    height: 240px;
+    overflow: visible;
+    border: 1px solid rgba(255,255,255,.28);
+    border-radius: 17px;
+    background: linear-gradient(145deg, #ff9dbd 0%, #ff548e 48%, #d92770 100%);
+    box-shadow: 0 30px 65px rgba(0,0,0,.42), 0 12px 45px rgba(255,47,146,.25), inset 0 1px rgba(255,255,255,.5);
+    transform-style: preserve-3d;
+    perspective: 1100px;
+}
+.envelope::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255,255,255,.22), transparent 42%, rgba(100,0,40,.14));
+    pointer-events: none;
+}
+.envelope::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 58%;
+    border-radius: 0 0 16px 16px;
+    background: linear-gradient(145deg, transparent 49.5%, rgba(150,0,55,.2) 50%);
+    pointer-events: none;
+}
+.envelope-flap {
+    position: absolute;
+    top: 0; left: 0;
+    width: 0; height: 0;
+    border-left: 180px solid transparent;
+    border-right: 180px solid transparent;
+    border-top: 137px solid #ff76a4;
+    transform-origin: top center;
+    transition: transform .85s var(--ease-out), filter .85s ease;
+    filter: drop-shadow(0 7px 10px rgba(90,0,35,.18));
+    z-index: 4;
+    backface-visibility: hidden;
+}
+.envelope.open .envelope-flap { transform: rotateX(180deg); z-index: 1; }
+.wax-seal {
+    position: absolute;
+    top: 100px;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    width: 70px; height: 70px;
+    border: 2px solid rgba(255,220,230,.8);
+    border-radius: 50%;
+    color: #fff4f8;
+    font-size: 28px;
+    background: radial-gradient(circle at 32% 25%, #ff8eae, #ed245f 54%, #810c37 100%);
+    box-shadow: 0 9px 25px rgba(0,0,0,.4), inset 0 3px 7px rgba(255,255,255,.45), inset 0 -5px 10px rgba(80,0,30,.35);
+}
+.envelope-text {
+    margin-top: 34px;
+    color: var(--pink-light);
+    font-size: 1.08rem;
+    font-weight: 650;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    text-shadow: 0 3px 18px rgba(255,47,146,.5);
+    animation: invitation-breathe 2.6s ease-in-out infinite;
+}
+@keyframes invitation-breathe {
+    0%,100% { opacity: .76; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-3px); }
+}
+#main-scene {
+    position: relative;
+    z-index: 10;
+    display: none;
+    place-items: center;
+    width: 100vw;
+    width: 100svw;
+    height: 100vh;
+    height: 100svh;
+    opacity: 0;
+    transition: opacity 1.25s ease;
+}
+#main-scene.visible { display: grid; opacity: 1; }
+.photo-frame {
+    position: relative;
+    isolation: isolate;
+    width: var(--frame-width);
+    height: var(--frame-height);
+    overflow: hidden;
+    border: 1px solid rgba(255,190,220,.55);
+    border-radius: var(--frame-radius);
+    background: #10050d;
+    box-shadow: var(--shadow-deep), var(--shadow-pink), inset 0 1px rgba(255,255,255,.28);
+    transform: translateZ(0);
+    transition: border-color .7s ease, box-shadow .7s ease, border-radius .7s ease;
+}
+.photo-frame:hover {
+    border-color: rgba(255,220,235,.82);
+    box-shadow: 0 38px 100px rgba(0,0,0,.78), 0 0 90px rgba(255,47,146,.3), inset 0 1px rgba(255,255,255,.35);
+}
+.photo-frame img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.075);
+    filter: brightness(.91) contrast(1.07) saturate(1.1);
+    transition: opacity 1.15s cubic-bezier(.22,.61,.36,1), transform 7s cubic-bezier(.16,1,.3,1), filter 1.1s ease, visibility 1.15s;
+    will-change: opacity, transform;
+}
+.photo-frame img.active {
+    z-index: 2;
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    animation: image-drift 8s ease-in-out forwards;
+}
+@keyframes image-drift {
+    from { transform: scale(1); }
+    to { transform: scale(1.075); }
+}
+.photo-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: inherit;
+    background: radial-gradient(ellipse at center, transparent 48%, rgba(7,0,5,.12) 76%, rgba(7,0,5,.48) 100%);
+    box-shadow: inset 0 0 35px rgba(255,105,180,.08), inset 0 -45px 70px rgba(0,0,0,.16);
+}
+.photo-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(130deg, rgba(255,255,255,.11), transparent 24%, transparent 72%, rgba(255,105,180,.07));
+    mix-blend-mode: screen;
+}
+.film-grain {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    opacity: .11;
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+}
+.my-girl-text {
+    position: absolute;
+    z-index: 8;
+    color: #fff;
+    font-family: Impact, "Arial Black", sans-serif;
+    font-weight: 900;
+    letter-spacing: -.055em;
+    line-height: .95;
+    text-transform: lowercase;
+    user-select: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(.35) rotate(-9deg);
+    text-shadow: 2px 3px 0 rgba(0,0,0,.75), 0 8px 24px rgba(0,0,0,.35);
+    -webkit-font-smoothing: antialiased;
+    pointer-events: none;
+}
+.my-girl-text.is-visible {
+    visibility: visible;
+    animation: text-arrive .85s var(--ease-spring) both;
+}
+.my-girl-text:hover { transform: scale(1.1) rotate(0deg); }
+@keyframes text-arrive {
+    0% { opacity: 0; transform: scale(.35) rotate(-9deg); }
+    72% { opacity: 1; transform: scale(1.08) rotate(var(--rot,0deg)); }
+    100% { opacity: 1; transform: scale(1) rotate(var(--rot,0deg)); }
+}
+.mg-1 { top: 30%; left: 6%; font-size: 1.5rem; --rot: -6deg; }
+.mg-2 { top: 42%; left: 2%; font-size: 2.2rem; color: #ffeb3b; --rot: 3deg; }
+.mg-3 { top: 51%; left: 4%; font-size: 1.3rem; --rot: -2deg; }
+.mg-4 { top: 33%; right: 20%; font-size: 1.9rem; --rot: 4deg; }
+.mg-5 { top: 41%; right: 26%; font-size: 1.4rem; color: #00ffff; --rot: -4deg; }
+.mg-6 { top: 47%; right: 8%; font-size: 2.5rem; --rot: 2deg; }
+.mg-7 { top: 56%; right: 22%; font-size: 1.6rem; color: #ff99bb; --rot: -3deg; }
+
+/* Dodatkowe gotowe warianty prezentacji zdjęć. */
+.photo-frame.is-cinematic img.active { filter: brightness(.82) contrast(1.18) saturate(.94); }
+.photo-frame.is-warm img.active { filter: brightness(.96) contrast(1.04) saturate(1.12) sepia(.09); }
+.photo-frame.is-rose img.active { filter: brightness(.94) contrast(1.05) saturate(1.16) hue-rotate(-7deg); }
+.photo-frame.is-dream img.active { filter: brightness(1.02) contrast(.98) saturate(1.08); }
+.photo-frame.is-vivid img.active { filter: brightness(.98) contrast(1.16) saturate(1.3); }
+.photo-frame.is-matte img.active { filter: brightness(.94) contrast(.92) saturate(.88); }
+.photo-frame.is-noir img.active { filter: grayscale(1) contrast(1.12) brightness(.88); }
+.photo-frame.is-soft img.active { filter: brightness(1.02) contrast(.96) saturate(1.02); }
+.photo-frame.is-zoom img.active { animation: image-drift 10s ease-in-out forwards; }
+.photo-frame.is-static img.active { animation: none; transform: none; }
+.photo-frame.is-rounded { border-radius: 42px; }
+.photo-frame.is-square { border-radius: 8px; }
+.photo-frame.is-glass { border-color: rgba(255,255,255,.68); backdrop-filter: blur(2px); }
+.photo-frame.is-gold { border-color: rgba(255,217,138,.75); box-shadow: var(--shadow-deep), 0 0 75px rgba(255,217,138,.18); }
+.photo-frame.is-neon { box-shadow: var(--shadow-deep), 0 0 18px rgba(255,47,146,.34), 0 0 85px rgba(255,47,146,.25); }
+.photo-frame.is-minimal { box-shadow: 0 22px 65px rgba(0,0,0,.72); }
+.photo-frame.is-vignette::before { background: radial-gradient(ellipse, transparent 35%, rgba(0,0,0,.58) 100%); }
+.photo-frame.is-bright::before { background: linear-gradient(180deg, rgba(255,255,255,.08), transparent 30%, rgba(0,0,0,.08)); }
+.photo-frame.is-grainy .film-grain { opacity: .2; }
+.photo-frame.is-clean .film-grain { opacity: 0; }
+.photo-frame.is-glow::after { box-shadow: inset 0 0 55px rgba(255,105,180,.18); }
+.photo-frame.is-muted img.active { filter: saturate(.72) brightness(.9) contrast(1.02); }
+.photo-frame.is-luminous img.active { filter: saturate(1.12) brightness(1.06) contrast(1.04); }
+.photo-frame.is-fade img { transition-duration: 1.8s; }
+.photo-frame.is-fast img { transition-duration: .55s; }
+.photo-frame.is-slow img { transition-duration: 1.8s; }
+.photo-frame.is-landscape { width: min(820px, 92vw); height: min(520px, 78vh); }
+.photo-frame.is-portrait { width: min(440px, 90vw); height: min(680px, 88vh); }
+.photo-frame.is-wide { width: min(1000px, 94vw); height: min(560px, 78vh); }
+.photo-frame.is-compact { width: min(360px, 88vw); height: min(480px, 78vh); }
+
+/* Klasy dekoracyjne do ewentualnego dalszego rozwijania strony. */
+.glass-surface { background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.16); backdrop-filter: blur(18px); }
+.text-gradient { color: transparent; background: linear-gradient(100deg, #fff1f7, #ff75b7 55%, #ffd98a); background-clip: text; -webkit-background-clip: text; }
+.neon-text { text-shadow: 0 0 8px rgba(255,105,180,.8), 0 0 24px rgba(255,47,146,.48); }
+.gold-text { color: var(--gold); text-shadow: 0 0 18px rgba(255,217,138,.3); }
+.soft-shadow { box-shadow: 0 18px 50px rgba(0,0,0,.35); }
+.pink-shadow { box-shadow: 0 15px 45px rgba(255,47,146,.22); }
+.gold-shadow { box-shadow: 0 15px 45px rgba(255,217,138,.15); }
+.blur-backdrop { backdrop-filter: blur(16px) saturate(1.2); }
+.rounded-soft { border-radius: 18px; }
+.rounded-large { border-radius: 30px; }
+.rounded-pill { border-radius: 999px; }
+
+/* Responsywność dużych ekranów. */
+@media (min-width: 1200px) {
+    .photo-frame { width: min(480px, 36vw); height: min(680px, 86vh); }
+    .envelope { transform: scale(1.04); }
+}
+@media (min-width: 1600px) {
+    .photo-frame { width: min(520px, 34vw); height: min(740px, 88vh); }
+}
+@media (max-width: 700px) {
+    :root { --frame-radius: 22px; }
+    .photo-frame { width: 91vw; height: 82vh; height: 82svh; }
+    .envelope { width: min(86vw, 360px); height: min(58vw, 240px); }
+    .envelope-flap { border-left-width: min(43vw,180px); border-right-width: min(43vw,180px); border-top-width: min(35vw,137px); }
+    .wax-seal { top: 42%; width: 62px; height: 62px; }
+    .envelope-text { margin-top: 28px; font-size: .9rem; letter-spacing: .14em; }
+    .mg-4 { right: 8%; }
+    .mg-5 { right: 12%; }
+}
+@media (max-width: 420px) {
+    .photo-frame { width: 93vw; height: 78vh; height: 78svh; border-radius: 19px; }
+    .my-girl-text { font-size: clamp(1rem, 5vw, 2rem); }
+    .mg-2 { font-size: 1.7rem; }
+    .mg-6 { font-size: 1.9rem; }
+}
+@media (orientation: landscape) and (max-height: 620px) {
+    .photo-frame { width: auto; height: 88vh; height: 88svh; aspect-ratio: 3 / 4; }
+    .envelope { transform: scale(.76); }
+    .envelope-text { margin-top: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    .photo-frame img.active { transform: none; }
+}
+
+/* Fine-grained light intensity utilities: useful for future decorative elements. */
+
+.aura-pink-001 {
+    --aura-strength: 0.003;
+    box-shadow: 0 0 4.25px rgba(255, 72, 158, 0.026);
+}
+.aura-pink-002 {
+    --aura-strength: 0.007;
+    box-shadow: 0 0 4.51px rgba(255, 72, 158, 0.026);
+}
+.aura-pink-003 {
+    --aura-strength: 0.010;
+    box-shadow: 0 0 4.76px rgba(255, 72, 158, 0.027);
+}
+.aura-pink-004 {
+    --aura-strength: 0.013;
+    box-shadow: 0 0 5.01px rgba(255, 72, 158, 0.028);
+}
+.aura-pink-005 {
+    --aura-strength: 0.017;
+    box-shadow: 0 0 5.27px rgba(255, 72, 158, 0.029);
+}
+.aura-pink-006 {
+    --aura-strength: 0.020;
+    box-shadow: 0 0 5.52px rgba(255, 72, 158, 0.029);
+}
+.aura-pink-007 {
+    --aura-strength: 0.023;
+    box-shadow: 0 0 5.77px rgba(255, 72, 158, 0.03);
+}
+.aura-pink-008 {
+    --aura-strength: 0.027;
+    box-shadow: 0 0 6.03px rgba(255, 72, 158, 0.031);
+}
+.aura-pink-009 {
+    --aura-strength: 0.030;
+    box-shadow: 0 0 6.28px rgba(255, 72, 158, 0.032);
+}
+.aura-pink-010 {
+    --aura-strength: 0.033;
+    box-shadow: 0 0 6.53px rgba(255, 72, 158, 0.032);
+}
+.aura-pink-011 {
+    --aura-strength: 0.037;
+    box-shadow: 0 0 6.79px rgba(255, 72, 158, 0.033);
+}
+.aura-pink-012 {
+    --aura-strength: 0.040;
+    box-shadow: 0 0 7.04px rgba(255, 72, 158, 0.034);
+}
+.aura-pink-013 {
+    --aura-strength: 0.043;
+    box-shadow: 0 0 7.29px rgba(255, 72, 158, 0.035);
+}
+.aura-pink-014 {
+    --aura-strength: 0.047;
+    box-shadow: 0 0 7.55px rgba(255, 72, 158, 0.035);
+}
+.aura-pink-015 {
+    --aura-strength: 0.050;
+    box-shadow: 0 0 7.8px rgba(255, 72, 158, 0.036);
+}
+.aura-pink-016 {
+    --aura-strength: 0.053;
+    box-shadow: 0 0 8.05px rgba(255, 72, 158, 0.037);
+}
+.aura-pink-017 {
+    --aura-strength: 0.057;
+    box-shadow: 0 0 8.31px rgba(255, 72, 158, 0.037);
+}
+.aura-pink-018 {
+    --aura-strength: 0.060;
+    box-shadow: 0 0 8.56px rgba(255, 72, 158, 0.038);
+}
+.aura-pink-019 {
+    --aura-strength: 0.063;
+    box-shadow: 0 0 8.81px rgba(255, 72, 158, 0.039);
+}
+.aura-pink-020 {
+    --aura-strength: 0.067;
+    box-shadow: 0 0 9.07px rgba(255, 72, 158, 0.04);
+}
+.aura-pink-021 {
+    --aura-strength: 0.070;
+    box-shadow: 0 0 9.32px rgba(255, 72, 158, 0.04);
+}
+.aura-pink-022 {
+    --aura-strength: 0.073;
+    box-shadow: 0 0 9.57px rgba(255, 72, 158, 0.041);
+}
+.aura-pink-023 {
+    --aura-strength: 0.077;
+    box-shadow: 0 0 9.83px rgba(255, 72, 158, 0.042);
+}
+.aura-pink-024 {
+    --aura-strength: 0.080;
+    box-shadow: 0 0 10.08px rgba(255, 72, 158, 0.043);
+}
+.aura-pink-025 {
+    --aura-strength: 0.083;
+    box-shadow: 0 0 10.33px rgba(255, 72, 158, 0.043);
+}
+.aura-pink-026 {
+    --aura-strength: 0.087;
+    box-shadow: 0 0 10.59px rgba(255, 72, 158, 0.044);
+}
+.aura-pink-027 {
+    --aura-strength: 0.090;
+    box-shadow: 0 0 10.84px rgba(255, 72, 158, 0.045);
+}
+.aura-pink-028 {
+    --aura-strength: 0.093;
+    box-shadow: 0 0 11.09px rgba(255, 72, 158, 0.046);
+}
+.aura-pink-029 {
+    --aura-strength: 0.097;
+    box-shadow: 0 0 11.35px rgba(255, 72, 158, 0.046);
+}
+.aura-pink-030 {
+    --aura-strength: 0.100;
+    box-shadow: 0 0 11.6px rgba(255, 72, 158, 0.047);
+}
+.aura-pink-031 {
+    --aura-strength: 0.103;
+    box-shadow: 0 0 11.85px rgba(255, 72, 158, 0.048);
+}
+.aura-pink-032 {
+    --aura-strength: 0.107;
+    box-shadow: 0 0 12.11px rgba(255, 72, 158, 0.048);
+}
+.aura-pink-033 {
+    --aura-strength: 0.110;
+    box-shadow: 0 0 12.36px rgba(255, 72, 158, 0.049);
+}
+.aura-pink-034 {
+    --aura-strength: 0.113;
+    box-shadow: 0 0 12.61px rgba(255, 72, 158, 0.05);
+}
+.aura-pink-035 {
+    --aura-strength: 0.117;
+    box-shadow: 0 0 12.87px rgba(255, 72, 158, 0.051);
+}
+.aura-pink-036 {
+    --aura-strength: 0.120;
+    box-shadow: 0 0 13.12px rgba(255, 72, 158, 0.051);
+}
+.aura-pink-037 {
+    --aura-strength: 0.123;
+    box-shadow: 0 0 13.37px rgba(255, 72, 158, 0.052);
+}
+.aura-pink-038 {
+    --aura-strength: 0.127;
+    box-shadow: 0 0 13.63px rgba(255, 72, 158, 0.053);
+}
+.aura-pink-039 {
+    --aura-strength: 0.130;
+    box-shadow: 0 0 13.88px rgba(255, 72, 158, 0.054);
+}
+.aura-pink-040 {
+    --aura-strength: 0.133;
+    box-shadow: 0 0 14.13px rgba(255, 72, 158, 0.054);
+}
+.aura-pink-041 {
+    --aura-strength: 0.137;
+    box-shadow: 0 0 14.39px rgba(255, 72, 158, 0.055);
+}
+.aura-pink-042 {
+    --aura-strength: 0.140;
+    box-shadow: 0 0 14.64px rgba(255, 72, 158, 0.056);
+}
+.aura-pink-043 {
+    --aura-strength: 0.143;
+    box-shadow: 0 0 14.89px rgba(255, 72, 158, 0.057);
+}
+.aura-pink-044 {
+    --aura-strength: 0.147;
+    box-shadow: 0 0 15.15px rgba(255, 72, 158, 0.057);
+}
+.aura-pink-045 {
+    --aura-strength: 0.150;
+    box-shadow: 0 0 15.4px rgba(255, 72, 158, 0.058);
+}
+.aura-pink-046 {
+    --aura-strength: 0.153;
+    box-shadow: 0 0 15.65px rgba(255, 72, 158, 0.059);
+}
+.aura-pink-047 {
+    --aura-strength: 0.157;
+    box-shadow: 0 0 15.91px rgba(255, 72, 158, 0.059);
+}
+.aura-pink-048 {
+    --aura-strength: 0.160;
+    box-shadow: 0 0 16.16px rgba(255, 72, 158, 0.06);
+}
+.aura-pink-049 {
+    --aura-strength: 0.163;
+    box-shadow: 0 0 16.41px rgba(255, 72, 158, 0.061);
+}
+.aura-pink-050 {
+    --aura-strength: 0.167;
+    box-shadow: 0 0 16.67px rgba(255, 72, 158, 0.062);
+}
+.aura-pink-051 {
+    --aura-strength: 0.170;
+    box-shadow: 0 0 16.92px rgba(255, 72, 158, 0.062);
+}
+.aura-pink-052 {
+    --aura-strength: 0.173;
+    box-shadow: 0 0 17.17px rgba(255, 72, 158, 0.063);
+}
+.aura-pink-053 {
+    --aura-strength: 0.177;
+    box-shadow: 0 0 17.43px rgba(255, 72, 158, 0.064);
+}
+.aura-pink-054 {
+    --aura-strength: 0.180;
+    box-shadow: 0 0 17.68px rgba(255, 72, 158, 0.065);
+}
+.aura-pink-055 {
+    --aura-strength: 0.183;
+    box-shadow: 0 0 17.93px rgba(255, 72, 158, 0.065);
+}
+.aura-pink-056 {
+    --aura-strength: 0.187;
+    box-shadow: 0 0 18.19px rgba(255, 72, 158, 0.066);
+}
+.aura-pink-057 {
+    --aura-strength: 0.190;
+    box-shadow: 0 0 18.44px rgba(255, 72, 158, 0.067);
+}
+.aura-pink-058 {
+    --aura-strength: 0.193;
+    box-shadow: 0 0 18.69px rgba(255, 72, 158, 0.068);
+}
+.aura-pink-059 {
+    --aura-strength: 0.197;
+    box-shadow: 0 0 18.95px rgba(255, 72, 158, 0.068);
+}
+.aura-pink-060 {
+    --aura-strength: 0.200;
+    box-shadow: 0 0 19.2px rgba(255, 72, 158, 0.069);
+}
+.aura-pink-061 {
+    --aura-strength: 0.203;
+    box-shadow: 0 0 19.45px rgba(255, 72, 158, 0.07);
+}
+.aura-pink-062 {
+    --aura-strength: 0.207;
+    box-shadow: 0 0 19.71px rgba(255, 72, 158, 0.07);
+}
+.aura-pink-063 {
+    --aura-strength: 0.210;
+    box-shadow: 0 0 19.96px rgba(255, 72, 158, 0.071);
+}
+.aura-pink-064 {
+    --aura-strength: 0.213;
+    box-shadow: 0 0 20.21px rgba(255, 72, 158, 0.072);
+}
+.aura-pink-065 {
+    --aura-strength: 0.217;
+    box-shadow: 0 0 20.47px rgba(255, 72, 158, 0.073);
+}
+.aura-pink-066 {
+    --aura-strength: 0.220;
+    box-shadow: 0 0 20.72px rgba(255, 72, 158, 0.073);
+}
+.aura-pink-067 {
+    --aura-strength: 0.223;
+    box-shadow: 0 0 20.97px rgba(255, 72, 158, 0.074);
+}
+.aura-pink-068 {
+    --aura-strength: 0.227;
+    box-shadow: 0 0 21.23px rgba(255, 72, 158, 0.075);
+}
+.aura-pink-069 {
+    --aura-strength: 0.230;
+    box-shadow: 0 0 21.48px rgba(255, 72, 158, 0.076);
+}
+.aura-pink-070 {
+    --aura-strength: 0.233;
+    box-shadow: 0 0 21.73px rgba(255, 72, 158, 0.076);
+}
+.aura-pink-071 {
+    --aura-strength: 0.237;
+    box-shadow: 0 0 21.99px rgba(255, 72, 158, 0.077);
+}
+.aura-pink-072 {
+    --aura-strength: 0.240;
+    box-shadow: 0 0 22.24px rgba(255, 72, 158, 0.078);
+}
+.aura-pink-073 {
+    --aura-strength: 0.243;
+    box-shadow: 0 0 22.49px rgba(255, 72, 158, 0.079);
+}
+.aura-pink-074 {
+    --aura-strength: 0.247;
+    box-shadow: 0 0 22.75px rgba(255, 72, 158, 0.079);
+}
+.aura-pink-075 {
+    --aura-strength: 0.250;
+    box-shadow: 0 0 23.0px rgba(255, 72, 158, 0.08);
+}
+.aura-pink-076 {
+    --aura-strength: 0.253;
+    box-shadow: 0 0 23.25px rgba(255, 72, 158, 0.081);
+}
+.aura-pink-077 {
+    --aura-strength: 0.257;
+    box-shadow: 0 0 23.51px rgba(255, 72, 158, 0.081);
+}
+.aura-pink-078 {
+    --aura-strength: 0.260;
+    box-shadow: 0 0 23.76px rgba(255, 72, 158, 0.082);
+}
+.aura-pink-079 {
+    --aura-strength: 0.263;
+    box-shadow: 0 0 24.01px rgba(255, 72, 158, 0.083);
+}
+.aura-pink-080 {
+    --aura-strength: 0.267;
+    box-shadow: 0 0 24.27px rgba(255, 72, 158, 0.084);
+}
+.aura-pink-081 {
+    --aura-strength: 0.270;
+    box-shadow: 0 0 24.52px rgba(255, 72, 158, 0.084);
+}
+.aura-pink-082 {
+    --aura-strength: 0.273;
+    box-shadow: 0 0 24.77px rgba(255, 72, 158, 0.085);
+}
+.aura-pink-083 {
+    --aura-strength: 0.277;
+    box-shadow: 0 0 25.03px rgba(255, 72, 158, 0.086);
+}
+.aura-pink-084 {
+    --aura-strength: 0.280;
+    box-shadow: 0 0 25.28px rgba(255, 72, 158, 0.087);
+}
+.aura-pink-085 {
+    --aura-strength: 0.283;
+    box-shadow: 0 0 25.53px rgba(255, 72, 158, 0.087);
+}
+.aura-pink-086 {
+    --aura-strength: 0.287;
+    box-shadow: 0 0 25.79px rgba(255, 72, 158, 0.088);
+}
+.aura-pink-087 {
+    --aura-strength: 0.290;
+    box-shadow: 0 0 26.04px rgba(255, 72, 158, 0.089);
+}
+.aura-pink-088 {
+    --aura-strength: 0.293;
+    box-shadow: 0 0 26.29px rgba(255, 72, 158, 0.09);
+}
+.aura-pink-089 {
+    --aura-strength: 0.297;
+    box-shadow: 0 0 26.55px rgba(255, 72, 158, 0.09);
+}
+.aura-pink-090 {
+    --aura-strength: 0.300;
+    box-shadow: 0 0 26.8px rgba(255, 72, 158, 0.091);
+}
+.aura-pink-091 {
+    --aura-strength: 0.303;
+    box-shadow: 0 0 27.05px rgba(255, 72, 158, 0.092);
+}
+.aura-pink-092 {
+    --aura-strength: 0.307;
+    box-shadow: 0 0 27.31px rgba(255, 72, 158, 0.092);
+}
+.aura-pink-093 {
+    --aura-strength: 0.310;
+    box-shadow: 0 0 27.56px rgba(255, 72, 158, 0.093);
+}
+.aura-pink-094 {
+    --aura-strength: 0.313;
+    box-shadow: 0 0 27.81px rgba(255, 72, 158, 0.094);
+}
+.aura-pink-095 {
+    --aura-strength: 0.317;
+    box-shadow: 0 0 28.07px rgba(255, 72, 158, 0.095);
+}
+.aura-pink-096 {
+    --aura-strength: 0.320;
+    box-shadow: 0 0 28.32px rgba(255, 72, 158, 0.095);
+}
+.aura-pink-097 {
+    --aura-strength: 0.323;
+    box-shadow: 0 0 28.57px rgba(255, 72, 158, 0.096);
+}
+.aura-pink-098 {
+    --aura-strength: 0.327;
+    box-shadow: 0 0 28.83px rgba(255, 72, 158, 0.097);
+}
+.aura-pink-099 {
+    --aura-strength: 0.330;
+    box-shadow: 0 0 29.08px rgba(255, 72, 158, 0.098);
+}
+.aura-pink-100 {
+    --aura-strength: 0.333;
+    box-shadow: 0 0 29.33px rgba(255, 72, 158, 0.098);
+}
+.aura-pink-101 {
+    --aura-strength: 0.337;
+    box-shadow: 0 0 29.59px rgba(255, 72, 158, 0.099);
+}
+.aura-pink-102 {
+    --aura-strength: 0.340;
+    box-shadow: 0 0 29.84px rgba(255, 72, 158, 0.1);
+}
+.aura-pink-103 {
+    --aura-strength: 0.343;
+    box-shadow: 0 0 30.09px rgba(255, 72, 158, 0.101);
+}
+.aura-pink-104 {
+    --aura-strength: 0.347;
+    box-shadow: 0 0 30.35px rgba(255, 72, 158, 0.101);
+}
+.aura-pink-105 {
+    --aura-strength: 0.350;
+    box-shadow: 0 0 30.6px rgba(255, 72, 158, 0.102);
+}
+.aura-pink-106 {
+    --aura-strength: 0.353;
+    box-shadow: 0 0 30.85px rgba(255, 72, 158, 0.103);
+}
+.aura-pink-107 {
+    --aura-strength: 0.357;
+    box-shadow: 0 0 31.11px rgba(255, 72, 158, 0.103);
+}
+.aura-pink-108 {
+    --aura-strength: 0.360;
+    box-shadow: 0 0 31.36px rgba(255, 72, 158, 0.104);
+}
+.aura-pink-109 {
+    --aura-strength: 0.363;
+    box-shadow: 0 0 31.61px rgba(255, 72, 158, 0.105);
+}
+.aura-pink-110 {
+    --aura-strength: 0.367;
+    box-shadow: 0 0 31.87px rgba(255, 72, 158, 0.106);
+}
+.aura-pink-111 {
+    --aura-strength: 0.370;
+    box-shadow: 0 0 32.12px rgba(255, 72, 158, 0.106);
+}
+.aura-pink-112 {
+    --aura-strength: 0.373;
+    box-shadow: 0 0 32.37px rgba(255, 72, 158, 0.107);
+}
+.aura-pink-113 {
+    --aura-strength: 0.377;
+    box-shadow: 0 0 32.63px rgba(255, 72, 158, 0.108);
+}
+.aura-pink-114 {
+    --aura-strength: 0.380;
+    box-shadow: 0 0 32.88px rgba(255, 72, 158, 0.109);
+}
+.aura-pink-115 {
+    --aura-strength: 0.383;
+    box-shadow: 0 0 33.13px rgba(255, 72, 158, 0.109);
+}
+.aura-pink-116 {
+    --aura-strength: 0.387;
+    box-shadow: 0 0 33.39px rgba(255, 72, 158, 0.11);
+}
+.aura-pink-117 {
+    --aura-strength: 0.390;
+    box-shadow: 0 0 33.64px rgba(255, 72, 158, 0.111);
+}
+.aura-pink-118 {
+    --aura-strength: 0.393;
+    box-shadow: 0 0 33.89px rgba(255, 72, 158, 0.112);
+}
+.aura-pink-119 {
+    --aura-strength: 0.397;
+    box-shadow: 0 0 34.15px rgba(255, 72, 158, 0.112);
+}
+.aura-pink-120 {
+    --aura-strength: 0.400;
+    box-shadow: 0 0 34.4px rgba(255, 72, 158, 0.113);
+}
+.aura-pink-121 {
+    --aura-strength: 0.403;
+    box-shadow: 0 0 34.65px rgba(255, 72, 158, 0.114);
+}
+.aura-pink-122 {
+    --aura-strength: 0.407;
+    box-shadow: 0 0 34.91px rgba(255, 72, 158, 0.114);
+}
+.aura-pink-123 {
+    --aura-strength: 0.410;
+    box-shadow: 0 0 35.16px rgba(255, 72, 158, 0.115);
+}
+.aura-pink-124 {
+    --aura-strength: 0.413;
+    box-shadow: 0 0 35.41px rgba(255, 72, 158, 0.116);
+}
+.aura-pink-125 {
+    --aura-strength: 0.417;
+    box-shadow: 0 0 35.67px rgba(255, 72, 158, 0.117);
+}
+.aura-pink-126 {
+    --aura-strength: 0.420;
+    box-shadow: 0 0 35.92px rgba(255, 72, 158, 0.117);
+}
+.aura-pink-127 {
+    --aura-strength: 0.423;
+    box-shadow: 0 0 36.17px rgba(255, 72, 158, 0.118);
+}
+.aura-pink-128 {
+    --aura-strength: 0.427;
+    box-shadow: 0 0 36.43px rgba(255, 72, 158, 0.119);
+}
+.aura-pink-129 {
+    --aura-strength: 0.430;
+    box-shadow: 0 0 36.68px rgba(255, 72, 158, 0.12);
+}
+.aura-pink-130 {
+    --aura-strength: 0.433;
+    box-shadow: 0 0 36.93px rgba(255, 72, 158, 0.12);
+}
+.aura-pink-131 {
+    --aura-strength: 0.437;
+    box-shadow: 0 0 37.19px rgba(255, 72, 158, 0.121);
+}
+.aura-pink-132 {
+    --aura-strength: 0.440;
+    box-shadow: 0 0 37.44px rgba(255, 72, 158, 0.122);
+}
+.aura-pink-133 {
+    --aura-strength: 0.443;
+    box-shadow: 0 0 37.69px rgba(255, 72, 158, 0.123);
+}
+.aura-pink-134 {
+    --aura-strength: 0.447;
+    box-shadow: 0 0 37.95px rgba(255, 72, 158, 0.123);
+}
+.aura-pink-135 {
+    --aura-strength: 0.450;
+    box-shadow: 0 0 38.2px rgba(255, 72, 158, 0.124);
+}
+.aura-pink-136 {
+    --aura-strength: 0.453;
+    box-shadow: 0 0 38.45px rgba(255, 72, 158, 0.125);
+}
+.aura-pink-137 {
+    --aura-strength: 0.457;
+    box-shadow: 0 0 38.71px rgba(255, 72, 158, 0.125);
+}
+.aura-pink-138 {
+    --aura-strength: 0.460;
+    box-shadow: 0 0 38.96px rgba(255, 72, 158, 0.126);
+}
+.aura-pink-139 {
+    --aura-strength: 0.463;
+    box-shadow: 0 0 39.21px rgba(255, 72, 158, 0.127);
+}
+.aura-pink-140 {
+    --aura-strength: 0.467;
+    box-shadow: 0 0 39.47px rgba(255, 72, 158, 0.128);
+}
+.aura-pink-141 {
+    --aura-strength: 0.470;
+    box-shadow: 0 0 39.72px rgba(255, 72, 158, 0.128);
+}
+.aura-pink-142 {
+    --aura-strength: 0.473;
+    box-shadow: 0 0 39.97px rgba(255, 72, 158, 0.129);
+}
+.aura-pink-143 {
+    --aura-strength: 0.477;
+    box-shadow: 0 0 40.23px rgba(255, 72, 158, 0.13);
+}
+.aura-pink-144 {
+    --aura-strength: 0.480;
+    box-shadow: 0 0 40.48px rgba(255, 72, 158, 0.131);
+}
+.aura-pink-145 {
+    --aura-strength: 0.483;
+    box-shadow: 0 0 40.73px rgba(255, 72, 158, 0.131);
+}
+.aura-pink-146 {
+    --aura-strength: 0.487;
+    box-shadow: 0 0 40.99px rgba(255, 72, 158, 0.132);
+}
+.aura-pink-147 {
+    --aura-strength: 0.490;
+    box-shadow: 0 0 41.24px rgba(255, 72, 158, 0.133);
+}
+.aura-pink-148 {
+    --aura-strength: 0.493;
+    box-shadow: 0 0 41.49px rgba(255, 72, 158, 0.134);
+}
+.aura-pink-149 {
+    --aura-strength: 0.497;
+    box-shadow: 0 0 41.75px rgba(255, 72, 158, 0.134);
+}
+.aura-pink-150 {
+    --aura-strength: 0.500;
+    box-shadow: 0 0 42.0px rgba(255, 72, 158, 0.135);
+}
+.aura-pink-151 {
+    --aura-strength: 0.503;
+    box-shadow: 0 0 42.25px rgba(255, 72, 158, 0.136);
+}
+.aura-pink-152 {
+    --aura-strength: 0.507;
+    box-shadow: 0 0 42.51px rgba(255, 72, 158, 0.136);
+}
+.aura-pink-153 {
+    --aura-strength: 0.510;
+    box-shadow: 0 0 42.76px rgba(255, 72, 158, 0.137);
+}
+.aura-pink-154 {
+    --aura-strength: 0.513;
+    box-shadow: 0 0 43.01px rgba(255, 72, 158, 0.138);
+}
+.aura-pink-155 {
+    --aura-strength: 0.517;
+    box-shadow: 0 0 43.27px rgba(255, 72, 158, 0.139);
+}
+.aura-pink-156 {
+    --aura-strength: 0.520;
+    box-shadow: 0 0 43.52px rgba(255, 72, 158, 0.139);
+}
+.aura-pink-157 {
+    --aura-strength: 0.523;
+    box-shadow: 0 0 43.77px rgba(255, 72, 158, 0.14);
+}
+.aura-pink-158 {
+    --aura-strength: 0.527;
+    box-shadow: 0 0 44.03px rgba(255, 72, 158, 0.141);
+}
+.aura-pink-159 {
+    --aura-strength: 0.530;
+    box-shadow: 0 0 44.28px rgba(255, 72, 158, 0.142);
+}
+.aura-pink-160 {
+    --aura-strength: 0.533;
+    box-shadow: 0 0 44.53px rgba(255, 72, 158, 0.142);
+}
+.aura-pink-161 {
+    --aura-strength: 0.537;
+    box-shadow: 0 0 44.79px rgba(255, 72, 158, 0.143);
+}
+.aura-pink-162 {
+    --aura-strength: 0.540;
+    box-shadow: 0 0 45.04px rgba(255, 72, 158, 0.144);
+}
+.aura-pink-163 {
+    --aura-strength: 0.543;
+    box-shadow: 0 0 45.29px rgba(255, 72, 158, 0.145);
+}
+.aura-pink-164 {
+    --aura-strength: 0.547;
+    box-shadow: 0 0 45.55px rgba(255, 72, 158, 0.145);
+}
+.aura-pink-165 {
+    --aura-strength: 0.550;
+    box-shadow: 0 0 45.8px rgba(255, 72, 158, 0.146);
+}
+.aura-pink-166 {
+    --aura-strength: 0.553;
+    box-shadow: 0 0 46.05px rgba(255, 72, 158, 0.147);
+}
+.aura-pink-167 {
+    --aura-strength: 0.557;
+    box-shadow: 0 0 46.31px rgba(255, 72, 158, 0.147);
+}
+.aura-pink-168 {
+    --aura-strength: 0.560;
+    box-shadow: 0 0 46.56px rgba(255, 72, 158, 0.148);
+}
+.aura-pink-169 {
+    --aura-strength: 0.563;
+    box-shadow: 0 0 46.81px rgba(255, 72, 158, 0.149);
+}
+.aura-pink-170 {
+    --aura-strength: 0.567;
+    box-shadow: 0 0 47.07px rgba(255, 72, 158, 0.15);
+}
+.aura-pink-171 {
+    --aura-strength: 0.570;
+    box-shadow: 0 0 47.32px rgba(255, 72, 158, 0.15);
+}
+.aura-pink-172 {
+    --aura-strength: 0.573;
+    box-shadow: 0 0 47.57px rgba(255, 72, 158, 0.151);
+}
+.aura-pink-173 {
+    --aura-strength: 0.577;
+    box-shadow: 0 0 47.83px rgba(255, 72, 158, 0.152);
+}
+.aura-pink-174 {
+    --aura-strength: 0.580;
+    box-shadow: 0 0 48.08px rgba(255, 72, 158, 0.153);
+}
+.aura-pink-175 {
+    --aura-strength: 0.583;
+    box-shadow: 0 0 48.33px rgba(255, 72, 158, 0.153);
+}
+.aura-pink-176 {
+    --aura-strength: 0.587;
+    box-shadow: 0 0 48.59px rgba(255, 72, 158, 0.154);
+}
+.aura-pink-177 {
+    --aura-strength: 0.590;
+    box-shadow: 0 0 48.84px rgba(255, 72, 158, 0.155);
+}
+.aura-pink-178 {
+    --aura-strength: 0.593;
+    box-shadow: 0 0 49.09px rgba(255, 72, 158, 0.156);
+}
+.aura-pink-179 {
+    --aura-strength: 0.597;
+    box-shadow: 0 0 49.35px rgba(255, 72, 158, 0.156);
+}
+.aura-pink-180 {
+    --aura-strength: 0.600;
+    box-shadow: 0 0 49.6px rgba(255, 72, 158, 0.157);
+}
+.aura-pink-181 {
+    --aura-strength: 0.603;
+    box-shadow: 0 0 49.85px rgba(255, 72, 158, 0.158);
+}
+.aura-pink-182 {
+    --aura-strength: 0.607;
+    box-shadow: 0 0 50.11px rgba(255, 72, 158, 0.158);
+}
+.aura-pink-183 {
+    --aura-strength: 0.610;
+    box-shadow: 0 0 50.36px rgba(255, 72, 158, 0.159);
+}
+.aura-pink-184 {
+    --aura-strength: 0.613;
+    box-shadow: 0 0 50.61px rgba(255, 72, 158, 0.16);
+}
+.aura-pink-185 {
+    --aura-strength: 0.617;
+    box-shadow: 0 0 50.87px rgba(255, 72, 158, 0.161);
+}
+.aura-pink-186 {
+    --aura-strength: 0.620;
+    box-shadow: 0 0 51.12px rgba(255, 72, 158, 0.161);
+}
+.aura-pink-187 {
+    --aura-strength: 0.623;
+    box-shadow: 0 0 51.37px rgba(255, 72, 158, 0.162);
+}
+.aura-pink-188 {
+    --aura-strength: 0.627;
+    box-shadow: 0 0 51.63px rgba(255, 72, 158, 0.163);
+}
+.aura-pink-189 {
+    --aura-strength: 0.630;
+    box-shadow: 0 0 51.88px rgba(255, 72, 158, 0.164);
+}
+.aura-pink-190 {
+    --aura-strength: 0.633;
+    box-shadow: 0 0 52.13px rgba(255, 72, 158, 0.164);
+}
+.aura-pink-191 {
+    --aura-strength: 0.637;
+    box-shadow: 0 0 52.39px rgba(255, 72, 158, 0.165);
+}
+.aura-pink-192 {
+    --aura-strength: 0.640;
+    box-shadow: 0 0 52.64px rgba(255, 72, 158, 0.166);
+}
+.aura-pink-193 {
+    --aura-strength: 0.643;
+    box-shadow: 0 0 52.89px rgba(255, 72, 158, 0.167);
+}
+.aura-pink-194 {
+    --aura-strength: 0.647;
+    box-shadow: 0 0 53.15px rgba(255, 72, 158, 0.167);
+}
+.aura-pink-195 {
+    --aura-strength: 0.650;
+    box-shadow: 0 0 53.4px rgba(255, 72, 158, 0.168);
+}
+.aura-pink-196 {
+    --aura-strength: 0.653;
+    box-shadow: 0 0 53.65px rgba(255, 72, 158, 0.169);
+}
+.aura-pink-197 {
+    --aura-strength: 0.657;
+    box-shadow: 0 0 53.91px rgba(255, 72, 158, 0.169);
+}
+.aura-pink-198 {
+    --aura-strength: 0.660;
+    box-shadow: 0 0 54.16px rgba(255, 72, 158, 0.17);
+}
+.aura-pink-199 {
+    --aura-strength: 0.663;
+    box-shadow: 0 0 54.41px rgba(255, 72, 158, 0.171);
+}
+.aura-pink-200 {
+    --aura-strength: 0.667;
+    box-shadow: 0 0 54.67px rgba(255, 72, 158, 0.172);
+}
+.aura-pink-201 {
+    --aura-strength: 0.670;
+    box-shadow: 0 0 54.92px rgba(255, 72, 158, 0.172);
+}
+.aura-pink-202 {
+    --aura-strength: 0.673;
+    box-shadow: 0 0 55.17px rgba(255, 72, 158, 0.173);
+}
+.aura-pink-203 {
+    --aura-strength: 0.677;
+    box-shadow: 0 0 55.43px rgba(255, 72, 158, 0.174);
+}
+.aura-pink-204 {
+    --aura-strength: 0.680;
+    box-shadow: 0 0 55.68px rgba(255, 72, 158, 0.175);
+}
+.aura-pink-205 {
+    --aura-strength: 0.683;
+    box-shadow: 0 0 55.93px rgba(255, 72, 158, 0.175);
+}
+.aura-pink-206 {
+    --aura-strength: 0.687;
+    box-shadow: 0 0 56.19px rgba(255, 72, 158, 0.176);
+}
+.aura-pink-207 {
+    --aura-strength: 0.690;
+    box-shadow: 0 0 56.44px rgba(255, 72, 158, 0.177);
+}
+.aura-pink-208 {
+    --aura-strength: 0.693;
+    box-shadow: 0 0 56.69px rgba(255, 72, 158, 0.178);
+}
+.aura-pink-209 {
+    --aura-strength: 0.697;
+    box-shadow: 0 0 56.95px rgba(255, 72, 158, 0.178);
+}
+.aura-pink-210 {
+    --aura-strength: 0.700;
+    box-shadow: 0 0 57.2px rgba(255, 72, 158, 0.179);
+}
+.aura-pink-211 {
+    --aura-strength: 0.703;
+    box-shadow: 0 0 57.45px rgba(255, 72, 158, 0.18);
+}
+.aura-pink-212 {
+    --aura-strength: 0.707;
+    box-shadow: 0 0 57.71px rgba(255, 72, 158, 0.18);
+}
+.aura-pink-213 {
+    --aura-strength: 0.710;
+    box-shadow: 0 0 57.96px rgba(255, 72, 158, 0.181);
+}
+.aura-pink-214 {
+    --aura-strength: 0.713;
+    box-shadow: 0 0 58.21px rgba(255, 72, 158, 0.182);
+}
+.aura-pink-215 {
+    --aura-strength: 0.717;
+    box-shadow: 0 0 58.47px rgba(255, 72, 158, 0.183);
+}
+.aura-pink-216 {
+    --aura-strength: 0.720;
+    box-shadow: 0 0 58.72px rgba(255, 72, 158, 0.183);
+}
+.aura-pink-217 {
+    --aura-strength: 0.723;
+    box-shadow: 0 0 58.97px rgba(255, 72, 158, 0.184);
+}
+.aura-pink-218 {
+    --aura-strength: 0.727;
+    box-shadow: 0 0 59.23px rgba(255, 72, 158, 0.185);
+}
+.aura-pink-219 {
+    --aura-strength: 0.730;
+    box-shadow: 0 0 59.48px rgba(255, 72, 158, 0.186);
+}
+.aura-pink-220 {
+    --aura-strength: 0.733;
+    box-shadow: 0 0 59.73px rgba(255, 72, 158, 0.186);
+}
+.aura-pink-221 {
+    --aura-strength: 0.737;
+    box-shadow: 0 0 59.99px rgba(255, 72, 158, 0.187);
+}
+.aura-pink-222 {
+    --aura-strength: 0.740;
+    box-shadow: 0 0 60.24px rgba(255, 72, 158, 0.188);
+}
+.aura-pink-223 {
+    --aura-strength: 0.743;
+    box-shadow: 0 0 60.49px rgba(255, 72, 158, 0.189);
+}
+.aura-pink-224 {
+    --aura-strength: 0.747;
+    box-shadow: 0 0 60.75px rgba(255, 72, 158, 0.189);
+}
+.aura-pink-225 {
+    --aura-strength: 0.750;
+    box-shadow: 0 0 61.0px rgba(255, 72, 158, 0.19);
+}
+.aura-pink-226 {
+    --aura-strength: 0.753;
+    box-shadow: 0 0 61.25px rgba(255, 72, 158, 0.191);
+}
+.aura-pink-227 {
+    --aura-strength: 0.757;
+    box-shadow: 0 0 61.51px rgba(255, 72, 158, 0.191);
+}
+.aura-pink-228 {
+    --aura-strength: 0.760;
+    box-shadow: 0 0 61.76px rgba(255, 72, 158, 0.192);
+}
+.aura-pink-229 {
+    --aura-strength: 0.763;
+    box-shadow: 0 0 62.01px rgba(255, 72, 158, 0.193);
+}
+.aura-pink-230 {
+    --aura-strength: 0.767;
+    box-shadow: 0 0 62.27px rgba(255, 72, 158, 0.194);
+}
+.aura-pink-231 {
+    --aura-strength: 0.770;
+    box-shadow: 0 0 62.52px rgba(255, 72, 158, 0.194);
+}
+.aura-pink-232 {
+    --aura-strength: 0.773;
+    box-shadow: 0 0 62.77px rgba(255, 72, 158, 0.195);
+}
+.aura-pink-233 {
+    --aura-strength: 0.777;
+    box-shadow: 0 0 63.03px rgba(255, 72, 158, 0.196);
+}
+.aura-pink-234 {
+    --aura-strength: 0.780;
+    box-shadow: 0 0 63.28px rgba(255, 72, 158, 0.197);
+}
+.aura-pink-235 {
+    --aura-strength: 0.783;
+    box-shadow: 0 0 63.53px rgba(255, 72, 158, 0.197);
+}
+.aura-pink-236 {
+    --aura-strength: 0.787;
+    box-shadow: 0 0 63.79px rgba(255, 72, 158, 0.198);
+}
+.aura-pink-237 {
+    --aura-strength: 0.790;
+    box-shadow: 0 0 64.04px rgba(255, 72, 158, 0.199);
+}
+.aura-pink-238 {
+    --aura-strength: 0.793;
+    box-shadow: 0 0 64.29px rgba(255, 72, 158, 0.2);
+}
+.aura-pink-239 {
+    --aura-strength: 0.797;
+    box-shadow: 0 0 64.55px rgba(255, 72, 158, 0.2);
+}
+.aura-pink-240 {
+    --aura-strength: 0.800;
+    box-shadow: 0 0 64.8px rgba(255, 72, 158, 0.201);
+}
+.aura-pink-241 {
+    --aura-strength: 0.803;
+    box-shadow: 0 0 65.05px rgba(255, 72, 158, 0.202);
+}
+.aura-pink-242 {
+    --aura-strength: 0.807;
+    box-shadow: 0 0 65.31px rgba(255, 72, 158, 0.202);
+}
+.aura-pink-243 {
+    --aura-strength: 0.810;
+    box-shadow: 0 0 65.56px rgba(255, 72, 158, 0.203);
+}
+.aura-pink-244 {
+    --aura-strength: 0.813;
+    box-shadow: 0 0 65.81px rgba(255, 72, 158, 0.204);
+}
+.aura-pink-245 {
+    --aura-strength: 0.817;
+    box-shadow: 0 0 66.07px rgba(255, 72, 158, 0.205);
+}
+.aura-pink-246 {
+    --aura-strength: 0.820;
+    box-shadow: 0 0 66.32px rgba(255, 72, 158, 0.205);
+}
+.aura-pink-247 {
+    --aura-strength: 0.823;
+    box-shadow: 0 0 66.57px rgba(255, 72, 158, 0.206);
+}
+.aura-pink-248 {
+    --aura-strength: 0.827;
+    box-shadow: 0 0 66.83px rgba(255, 72, 158, 0.207);
+}
+.aura-pink-249 {
+    --aura-strength: 0.830;
+    box-shadow: 0 0 67.08px rgba(255, 72, 158, 0.208);
+}
+.aura-pink-250 {
+    --aura-strength: 0.833;
+    box-shadow: 0 0 67.33px rgba(255, 72, 158, 0.208);
+}
+.aura-pink-251 {
+    --aura-strength: 0.837;
+    box-shadow: 0 0 67.59px rgba(255, 72, 158, 0.209);
+}
+.aura-pink-252 {
+    --aura-strength: 0.840;
+    box-shadow: 0 0 67.84px rgba(255, 72, 158, 0.21);
+}
+.aura-pink-253 {
+    --aura-strength: 0.843;
+    box-shadow: 0 0 68.09px rgba(255, 72, 158, 0.211);
+}
+.aura-pink-254 {
+    --aura-strength: 0.847;
+    box-shadow: 0 0 68.35px rgba(255, 72, 158, 0.211);
+}
+.aura-pink-255 {
+    --aura-strength: 0.850;
+    box-shadow: 0 0 68.6px rgba(255, 72, 158, 0.212);
+}
+.aura-pink-256 {
+    --aura-strength: 0.853;
+    box-shadow: 0 0 68.85px rgba(255, 72, 158, 0.213);
+}
+.aura-pink-257 {
+    --aura-strength: 0.857;
+    box-shadow: 0 0 69.11px rgba(255, 72, 158, 0.213);
+}
+.aura-pink-258 {
+    --aura-strength: 0.860;
+    box-shadow: 0 0 69.36px rgba(255, 72, 158, 0.214);
+}
+.aura-pink-259 {
+    --aura-strength: 0.863;
+    box-shadow: 0 0 69.61px rgba(255, 72, 158, 0.215);
+}
+.aura-pink-260 {
+    --aura-strength: 0.867;
+    box-shadow: 0 0 69.87px rgba(255, 72, 158, 0.216);
+}
+.aura-pink-261 {
+    --aura-strength: 0.870;
+    box-shadow: 0 0 70.12px rgba(255, 72, 158, 0.216);
+}
+.aura-pink-262 {
+    --aura-strength: 0.873;
+    box-shadow: 0 0 70.37px rgba(255, 72, 158, 0.217);
+}
+.aura-pink-263 {
+    --aura-strength: 0.877;
+    box-shadow: 0 0 70.63px rgba(255, 72, 158, 0.218);
+}
+.aura-pink-264 {
+    --aura-strength: 0.880;
+    box-shadow: 0 0 70.88px rgba(255, 72, 158, 0.219);
+}
+.aura-pink-265 {
+    --aura-strength: 0.883;
+    box-shadow: 0 0 71.13px rgba(255, 72, 158, 0.219);
+}
+.aura-pink-266 {
+    --aura-strength: 0.887;
+    box-shadow: 0 0 71.39px rgba(255, 72, 158, 0.22);
+}
+.aura-pink-267 {
+    --aura-strength: 0.890;
+    box-shadow: 0 0 71.64px rgba(255, 72, 158, 0.221);
+}
+.aura-pink-268 {
+    --aura-strength: 0.893;
+    box-shadow: 0 0 71.89px rgba(255, 72, 158, 0.222);
+}
+.aura-pink-269 {
+    --aura-strength: 0.897;
+    box-shadow: 0 0 72.15px rgba(255, 72, 158, 0.222);
+}
+.aura-pink-270 {
+    --aura-strength: 0.900;
+    box-shadow: 0 0 72.4px rgba(255, 72, 158, 0.223);
+}
+.aura-pink-271 {
+    --aura-strength: 0.903;
+    box-shadow: 0 0 72.65px rgba(255, 72, 158, 0.224);
+}
+.aura-pink-272 {
+    --aura-strength: 0.907;
+    box-shadow: 0 0 72.91px rgba(255, 72, 158, 0.224);
+}
+.aura-pink-273 {
+    --aura-strength: 0.910;
+    box-shadow: 0 0 73.16px rgba(255, 72, 158, 0.225);
+}
+.aura-pink-274 {
+    --aura-strength: 0.913;
+    box-shadow: 0 0 73.41px rgba(255, 72, 158, 0.226);
+}
+.aura-pink-275 {
+    --aura-strength: 0.917;
+    box-shadow: 0 0 73.67px rgba(255, 72, 158, 0.227);
+}
+.aura-pink-276 {
+    --aura-strength: 0.920;
+    box-shadow: 0 0 73.92px rgba(255, 72, 158, 0.227);
+}
+.aura-pink-277 {
+    --aura-strength: 0.923;
+    box-shadow: 0 0 74.17px rgba(255, 72, 158, 0.228);
+}
+.aura-pink-278 {
+    --aura-strength: 0.927;
+    box-shadow: 0 0 74.43px rgba(255, 72, 158, 0.229);
+}
+.aura-pink-279 {
+    --aura-strength: 0.930;
+    box-shadow: 0 0 74.68px rgba(255, 72, 158, 0.23);
+}
+.aura-pink-280 {
+    --aura-strength: 0.933;
+    box-shadow: 0 0 74.93px rgba(255, 72, 158, 0.23);
+}
+.aura-pink-281 {
+    --aura-strength: 0.937;
+    box-shadow: 0 0 75.19px rgba(255, 72, 158, 0.231);
+}
+.aura-pink-282 {
+    --aura-strength: 0.940;
+    box-shadow: 0 0 75.44px rgba(255, 72, 158, 0.232);
+}
+.aura-pink-283 {
+    --aura-strength: 0.943;
+    box-shadow: 0 0 75.69px rgba(255, 72, 158, 0.233);
+}
+.aura-pink-284 {
+    --aura-strength: 0.947;
+    box-shadow: 0 0 75.95px rgba(255, 72, 158, 0.233);
+}
+.aura-pink-285 {
+    --aura-strength: 0.950;
+    box-shadow: 0 0 76.2px rgba(255, 72, 158, 0.234);
+}
+.aura-pink-286 {
+    --aura-strength: 0.953;
+    box-shadow: 0 0 76.45px rgba(255, 72, 158, 0.235);
+}
+.aura-pink-287 {
+    --aura-strength: 0.957;
+    box-shadow: 0 0 76.71px rgba(255, 72, 158, 0.235);
+}
+.aura-pink-288 {
+    --aura-strength: 0.960;
+    box-shadow: 0 0 76.96px rgba(255, 72, 158, 0.236);
+}
+.aura-pink-289 {
+    --aura-strength: 0.963;
+    box-shadow: 0 0 77.21px rgba(255, 72, 158, 0.237);
+}
+.aura-pink-290 {
+    --aura-strength: 0.967;
+    box-shadow: 0 0 77.47px rgba(255, 72, 158, 0.238);
+}
+.aura-pink-291 {
+    --aura-strength: 0.970;
+    box-shadow: 0 0 77.72px rgba(255, 72, 158, 0.238);
+}
+.aura-pink-292 {
+    --aura-strength: 0.973;
+    box-shadow: 0 0 77.97px rgba(255, 72, 158, 0.239);
+}
+.aura-pink-293 {
+    --aura-strength: 0.977;
+    box-shadow: 0 0 78.23px rgba(255, 72, 158, 0.24);
+}
+.aura-pink-294 {
+    --aura-strength: 0.980;
+    box-shadow: 0 0 78.48px rgba(255, 72, 158, 0.241);
+}
+.aura-pink-295 {
+    --aura-strength: 0.983;
+    box-shadow: 0 0 78.73px rgba(255, 72, 158, 0.241);
+}
+.aura-pink-296 {
+    --aura-strength: 0.987;
+    box-shadow: 0 0 78.99px rgba(255, 72, 158, 0.242);
+}
+.aura-pink-297 {
+    --aura-strength: 0.990;
+    box-shadow: 0 0 79.24px rgba(255, 72, 158, 0.243);
+}
+.aura-pink-298 {
+    --aura-strength: 0.993;
+    box-shadow: 0 0 79.49px rgba(255, 72, 158, 0.244);
+}
+.aura-pink-299 {
+    --aura-strength: 0.997;
+    box-shadow: 0 0 79.75px rgba(255, 72, 158, 0.244);
+}
+.aura-pink-300 {
+    --aura-strength: 1.000;
+    box-shadow: 0 0 80.0px rgba(255, 72, 158, 0.245);
+}
+/* Motion timing presets for optional interface elements. */
+.motion-001 {
+    transition-duration: 120ms;
+}
+.motion-002 {
+    transition-duration: 140ms;
+}
+.motion-003 {
+    transition-duration: 160ms;
+}
+.motion-004 {
+    transition-duration: 180ms;
+}
+.motion-005 {
+    transition-duration: 200ms;
+}
+.motion-006 {
+    transition-duration: 220ms;
+}
+.motion-007 {
+    transition-duration: 240ms;
+}
+.motion-008 {
+    transition-duration: 260ms;
+}
+.motion-009 {
+    transition-duration: 280ms;
+}
+.motion-010 {
+    transition-duration: 300ms;
+}
+.motion-011 {
+    transition-duration: 320ms;
+}
+.motion-012 {
+    transition-duration: 340ms;
+}
+.motion-013 {
+    transition-duration: 360ms;
+}
+.motion-014 {
+    transition-duration: 380ms;
+}
+.motion-015 {
+    transition-duration: 400ms;
+}
+.motion-016 {
+    transition-duration: 420ms;
+}
+.motion-017 {
+    transition-duration: 440ms;
+}
+.motion-018 {
+    transition-duration: 460ms;
+}
+.motion-019 {
+    transition-duration: 480ms;
+}
+.motion-020 {
+    transition-duration: 500ms;
+}
+.motion-021 {
+    transition-duration: 520ms;
+}
+.motion-022 {
+    transition-duration: 540ms;
+}
+.motion-023 {
+    transition-duration: 560ms;
+}
+.motion-024 {
+    transition-duration: 580ms;
+}
+.motion-025 {
+    transition-duration: 600ms;
+}
+.motion-026 {
+    transition-duration: 620ms;
+}
+.motion-027 {
+    transition-duration: 640ms;
+}
+.motion-028 {
+    transition-duration: 660ms;
+}
+.motion-029 {
+    transition-duration: 680ms;
+}
+.motion-030 {
+    transition-duration: 700ms;
+}
+.motion-031 {
+    transition-duration: 720ms;
+}
+.motion-032 {
+    transition-duration: 740ms;
+}
+.motion-033 {
+    transition-duration: 760ms;
+}
+.motion-034 {
+    transition-duration: 780ms;
+}
+.motion-035 {
+    transition-duration: 800ms;
+}
+.motion-036 {
+    transition-duration: 820ms;
+}
+.motion-037 {
+    transition-duration: 840ms;
+}
+.motion-038 {
+    transition-duration: 860ms;
+}
+.motion-039 {
+    transition-duration: 880ms;
+}
+.motion-040 {
+    transition-duration: 900ms;
+}
+.motion-041 {
+    transition-duration: 920ms;
+}
+.motion-042 {
+    transition-duration: 940ms;
+}
+.motion-043 {
+    transition-duration: 960ms;
+}
+.motion-044 {
+    transition-duration: 980ms;
+}
+.motion-045 {
+    transition-duration: 1000ms;
+}
+.motion-046 {
+    transition-duration: 1020ms;
+}
+.motion-047 {
+    transition-duration: 1040ms;
+}
+.motion-048 {
+    transition-duration: 1060ms;
+}
+.motion-049 {
+    transition-duration: 1080ms;
+}
+.motion-050 {
+    transition-duration: 1100ms;
+}
+.motion-051 {
+    transition-duration: 1120ms;
+}
+.motion-052 {
+    transition-duration: 1140ms;
+}
+.motion-053 {
+    transition-duration: 1160ms;
+}
+.motion-054 {
+    transition-duration: 1180ms;
+}
+.motion-055 {
+    transition-duration: 1200ms;
+}
+.motion-056 {
+    transition-duration: 1220ms;
+}
+.motion-057 {
+    transition-duration: 1240ms;
+}
+.motion-058 {
+    transition-duration: 1260ms;
+}
+.motion-059 {
+    transition-duration: 1280ms;
+}
+.motion-060 {
+    transition-duration: 1300ms;
+}
+.motion-061 {
+    transition-duration: 1320ms;
+}
+.motion-062 {
+    transition-duration: 1340ms;
+}
+.motion-063 {
+    transition-duration: 1360ms;
+}
+.motion-064 {
+    transition-duration: 1380ms;
+}
+.motion-065 {
+    transition-duration: 1400ms;
+}
+.motion-066 {
+    transition-duration: 1420ms;
+}
+.motion-067 {
+    transition-duration: 1440ms;
+}
+.motion-068 {
+    transition-duration: 1460ms;
+}
+.motion-069 {
+    transition-duration: 1480ms;
+}
+.motion-070 {
+    transition-duration: 1500ms;
+}
+.motion-071 {
+    transition-duration: 1520ms;
+}
+.motion-072 {
+    transition-duration: 1540ms;
+}
+.motion-073 {
+    transition-duration: 1560ms;
+}
+.motion-074 {
+    transition-duration: 1580ms;
+}
+.motion-075 {
+    transition-duration: 1600ms;
+}
+.motion-076 {
+    transition-duration: 1620ms;
+}
+.motion-077 {
+    transition-duration: 1640ms;
+}
+.motion-078 {
+    transition-duration: 1660ms;
+}
+.motion-079 {
+    transition-duration: 1680ms;
+}
+.motion-080 {
+    transition-duration: 1700ms;
+}
+.motion-081 {
+    transition-duration: 1720ms;
+}
+.motion-082 {
+    transition-duration: 1740ms;
+}
+.motion-083 {
+    transition-duration: 1760ms;
+}
+.motion-084 {
+    transition-duration: 1780ms;
+}
+.motion-085 {
+    transition-duration: 1800ms;
+}
+.motion-086 {
+    transition-duration: 1820ms;
+}
+.motion-087 {
+    transition-duration: 1840ms;
+}
+.motion-088 {
+    transition-duration: 1860ms;
+}
+.motion-089 {
+    transition-duration: 1880ms;
+}
+.motion-090 {
+    transition-duration: 1900ms;
+}
+.motion-091 {
+    transition-duration: 1920ms;
+}
+.motion-092 {
+    transition-duration: 1940ms;
+}
+.motion-093 {
+    transition-duration: 1960ms;
+}
+.motion-094 {
+    transition-duration: 1980ms;
+}
+.motion-095 {
+    transition-duration: 2000ms;
+}
+.motion-096 {
+    transition-duration: 2020ms;
+}
+.motion-097 {
+    transition-duration: 2040ms;
+}
+.motion-098 {
+    transition-duration: 2060ms;
+}
+.motion-099 {
+    transition-duration: 2080ms;
+}
+.motion-100 {
+    transition-duration: 2100ms;
+}
+.motion-101 {
+    transition-duration: 2120ms;
+}
+.motion-102 {
+    transition-duration: 2140ms;
+}
+.motion-103 {
+    transition-duration: 2160ms;
+}
+.motion-104 {
+    transition-duration: 2180ms;
+}
+.motion-105 {
+    transition-duration: 2200ms;
+}
+.motion-106 {
+    transition-duration: 2220ms;
+}
+.motion-107 {
+    transition-duration: 2240ms;
+}
+.motion-108 {
+    transition-duration: 2260ms;
+}
+.motion-109 {
+    transition-duration: 2280ms;
+}
+.motion-110 {
+    transition-duration: 2300ms;
+}
+.motion-111 {
+    transition-duration: 2320ms;
+}
+.motion-112 {
+    transition-duration: 2340ms;
+}
+.motion-113 {
+    transition-duration: 2360ms;
+}
+.motion-114 {
+    transition-duration: 2380ms;
+}
+.motion-115 {
+    transition-duration: 2400ms;
+}
+.motion-116 {
+    transition-duration: 2420ms;
+}
+.motion-117 {
+    transition-duration: 2440ms;
+}
+.motion-118 {
+    transition-duration: 2460ms;
+}
+.motion-119 {
+    transition-duration: 2480ms;
+}
+.motion-120 {
+    transition-duration: 2500ms;
+}
+.motion-121 {
+    transition-duration: 2520ms;
+}
+.motion-122 {
+    transition-duration: 2540ms;
+}
+.motion-123 {
+    transition-duration: 2560ms;
+}
+.motion-124 {
+    transition-duration: 2580ms;
+}
+.motion-125 {
+    transition-duration: 2600ms;
+}
+.motion-126 {
+    transition-duration: 2620ms;
+}
+.motion-127 {
+    transition-duration: 2640ms;
+}
+.motion-128 {
+    transition-duration: 2660ms;
+}
+.motion-129 {
+    transition-duration: 2680ms;
+}
+.motion-130 {
+    transition-duration: 2700ms;
+}
+.motion-131 {
+    transition-duration: 2720ms;
+}
+.motion-132 {
+    transition-duration: 2740ms;
+}
+.motion-133 {
+    transition-duration: 2760ms;
+}
+.motion-134 {
+    transition-duration: 2780ms;
+}
+.motion-135 {
+    transition-duration: 2800ms;
+}
+.motion-136 {
+    transition-duration: 2820ms;
+}
+.motion-137 {
+    transition-duration: 2840ms;
+}
+.motion-138 {
+    transition-duration: 2860ms;
+}
+.motion-139 {
+    transition-duration: 2880ms;
+}
+.motion-140 {
+    transition-duration: 2900ms;
+}
+.motion-141 {
+    transition-duration: 2920ms;
+}
+.motion-142 {
+    transition-duration: 2940ms;
+}
+.motion-143 {
+    transition-duration: 2960ms;
+}
+.motion-144 {
+    transition-duration: 2980ms;
+}
+.motion-145 {
+    transition-duration: 3000ms;
+}
+.motion-146 {
+    transition-duration: 3020ms;
+}
+.motion-147 {
+    transition-duration: 3040ms;
+}
+.motion-148 {
+    transition-duration: 3060ms;
+}
+.motion-149 {
+    transition-duration: 3080ms;
+}
+.motion-150 {
+    transition-duration: 3100ms;
+}
+.motion-151 {
+    transition-duration: 3120ms;
+}
+.motion-152 {
+    transition-duration: 3140ms;
+}
+.motion-153 {
+    transition-duration: 3160ms;
+}
+.motion-154 {
+    transition-duration: 3180ms;
+}
+.motion-155 {
+    transition-duration: 3200ms;
+}
+.motion-156 {
+    transition-duration: 3220ms;
+}
+.motion-157 {
+    transition-duration: 3240ms;
+}
+.motion-158 {
+    transition-duration: 3260ms;
+}
+.motion-159 {
+    transition-duration: 3280ms;
+}
+.motion-160 {
+    transition-duration: 3300ms;
+}
+.motion-161 {
+    transition-duration: 3320ms;
+}
+.motion-162 {
+    transition-duration: 3340ms;
+}
+.motion-163 {
+    transition-duration: 3360ms;
+}
+.motion-164 {
+    transition-duration: 3380ms;
+}
+.motion-165 {
+    transition-duration: 3400ms;
+}
+.motion-166 {
+    transition-duration: 3420ms;
+}
+.motion-167 {
+    transition-duration: 3440ms;
+}
+.motion-168 {
+    transition-duration: 3460ms;
+}
+.motion-169 {
+    transition-duration: 3480ms;
+}
+.motion-170 {
+    transition-duration: 3500ms;
+}
+.motion-171 {
+    transition-duration: 3520ms;
+}
+.motion-172 {
+    transition-duration: 3540ms;
+}
+.motion-173 {
+    transition-duration: 3560ms;
+}
+.motion-174 {
+    transition-duration: 3580ms;
+}
+.motion-175 {
+    transition-duration: 3600ms;
+}
+.motion-176 {
+    transition-duration: 3620ms;
+}
+.motion-177 {
+    transition-duration: 3640ms;
+}
+.motion-178 {
+    transition-duration: 3660ms;
+}
+.motion-179 {
+    transition-duration: 3680ms;
+}
+.motion-180 {
+    transition-duration: 3700ms;
+}
+/* Image color intensity presets. */
+.image-tone-001 img.active {
+    filter: brightness(0.881) saturate(0.754) contrast(1.05);
+}
+.image-tone-002 img.active {
+    filter: brightness(0.882) saturate(0.758) contrast(1.05);
+}
+.image-tone-003 img.active {
+    filter: brightness(0.883) saturate(0.762) contrast(1.05);
+}
+.image-tone-004 img.active {
+    filter: brightness(0.884) saturate(0.766) contrast(1.05);
+}
+.image-tone-005 img.active {
+    filter: brightness(0.885) saturate(0.770) contrast(1.05);
+}
+.image-tone-006 img.active {
+    filter: brightness(0.886) saturate(0.774) contrast(1.05);
+}
+.image-tone-007 img.active {
+    filter: brightness(0.887) saturate(0.778) contrast(1.05);
+}
+.image-tone-008 img.active {
+    filter: brightness(0.888) saturate(0.782) contrast(1.05);
+}
+.image-tone-009 img.active {
+    filter: brightness(0.889) saturate(0.786) contrast(1.05);
+}
+.image-tone-010 img.active {
+    filter: brightness(0.890) saturate(0.790) contrast(1.05);
+}
+.image-tone-011 img.active {
+    filter: brightness(0.891) saturate(0.794) contrast(1.05);
+}
+.image-tone-012 img.active {
+    filter: brightness(0.892) saturate(0.798) contrast(1.05);
+}
+.image-tone-013 img.active {
+    filter: brightness(0.893) saturate(0.802) contrast(1.05);
+}
+.image-tone-014 img.active {
+    filter: brightness(0.894) saturate(0.806) contrast(1.05);
+}
+.image-tone-015 img.active {
+    filter: brightness(0.895) saturate(0.810) contrast(1.05);
+}
+.image-tone-016 img.active {
+    filter: brightness(0.896) saturate(0.814) contrast(1.05);
+}
+.image-tone-017 img.active {
+    filter: brightness(0.897) saturate(0.818) contrast(1.05);
+}
+.image-tone-018 img.active {
+    filter: brightness(0.898) saturate(0.822) contrast(1.05);
+}
+.image-tone-019 img.active {
+    filter: brightness(0.899) saturate(0.826) contrast(1.05);
+}
+.image-tone-020 img.active {
+    filter: brightness(0.900) saturate(0.830) contrast(1.05);
+}
+.image-tone-021 img.active {
+    filter: brightness(0.901) saturate(0.834) contrast(1.05);
+}
+.image-tone-022 img.active {
+    filter: brightness(0.902) saturate(0.838) contrast(1.05);
+}
+.image-tone-023 img.active {
+    filter: brightness(0.903) saturate(0.842) contrast(1.05);
+}
+.image-tone-024 img.active {
+    filter: brightness(0.904) saturate(0.846) contrast(1.05);
+}
+.image-tone-025 img.active {
+    filter: brightness(0.905) saturate(0.850) contrast(1.05);
+}
+.image-tone-026 img.active {
+    filter: brightness(0.906) saturate(0.854) contrast(1.05);
+}
+.image-tone-027 img.active {
+    filter: brightness(0.907) saturate(0.858) contrast(1.05);
+}
+.image-tone-028 img.active {
+    filter: brightness(0.908) saturate(0.862) contrast(1.05);
+}
+.image-tone-029 img.active {
+    filter: brightness(0.909) saturate(0.866) contrast(1.05);
+}
+.image-tone-030 img.active {
+    filter: brightness(0.910) saturate(0.870) contrast(1.05);
+}
+.image-tone-031 img.active {
+    filter: brightness(0.911) saturate(0.874) contrast(1.05);
+}
+.image-tone-032 img.active {
+    filter: brightness(0.912) saturate(0.878) contrast(1.05);
+}
+.image-tone-033 img.active {
+    filter: brightness(0.913) saturate(0.882) contrast(1.05);
+}
+.image-tone-034 img.active {
+    filter: brightness(0.914) saturate(0.886) contrast(1.05);
+}
+.image-tone-035 img.active {
+    filter: brightness(0.915) saturate(0.890) contrast(1.05);
+}
+.image-tone-036 img.active {
+    filter: brightness(0.916) saturate(0.894) contrast(1.05);
+}
+.image-tone-037 img.active {
+    filter: brightness(0.917) saturate(0.898) contrast(1.05);
+}
+.image-tone-038 img.active {
+    filter: brightness(0.918) saturate(0.902) contrast(1.05);
+}
+.image-tone-039 img.active {
+    filter: brightness(0.919) saturate(0.906) contrast(1.05);
+}
+.image-tone-040 img.active {
+    filter: brightness(0.920) saturate(0.910) contrast(1.05);
+}
+.image-tone-041 img.active {
+    filter: brightness(0.921) saturate(0.914) contrast(1.05);
+}
+.image-tone-042 img.active {
+    filter: brightness(0.922) saturate(0.918) contrast(1.05);
+}
+.image-tone-043 img.active {
+    filter: brightness(0.923) saturate(0.922) contrast(1.05);
+}
+.image-tone-044 img.active {
+    filter: brightness(0.924) saturate(0.926) contrast(1.05);
+}
+.image-tone-045 img.active {
+    filter: brightness(0.925) saturate(0.930) contrast(1.05);
+}
+.image-tone-046 img.active {
+    filter: brightness(0.926) saturate(0.934) contrast(1.05);
+}
+.image-tone-047 img.active {
+    filter: brightness(0.927) saturate(0.938) contrast(1.05);
+}
+.image-tone-048 img.active {
+    filter: brightness(0.928) saturate(0.942) contrast(1.05);
+}
+.image-tone-049 img.active {
+    filter: brightness(0.929) saturate(0.946) contrast(1.05);
+}
+.image-tone-050 img.active {
+    filter: brightness(0.930) saturate(0.950) contrast(1.05);
+}
+.image-tone-051 img.active {
+    filter: brightness(0.931) saturate(0.954) contrast(1.05);
+}
+.image-tone-052 img.active {
+    filter: brightness(0.932) saturate(0.958) contrast(1.05);
+}
+.image-tone-053 img.active {
+    filter: brightness(0.933) saturate(0.962) contrast(1.05);
+}
+.image-tone-054 img.active {
+    filter: brightness(0.934) saturate(0.966) contrast(1.05);
+}
+.image-tone-055 img.active {
+    filter: brightness(0.935) saturate(0.970) contrast(1.05);
+}
+.image-tone-056 img.active {
+    filter: brightness(0.936) saturate(0.974) contrast(1.05);
+}
+.image-tone-057 img.active {
+    filter: brightness(0.937) saturate(0.978) contrast(1.05);
+}
+.image-tone-058 img.active {
+    filter: brightness(0.938) saturate(0.982) contrast(1.05);
+}
+.image-tone-059 img.active {
+    filter: brightness(0.939) saturate(0.986) contrast(1.05);
+}
+.image-tone-060 img.active {
+    filter: brightness(0.940) saturate(0.990) contrast(1.05);
+}
+.image-tone-061 img.active {
+    filter: brightness(0.941) saturate(0.994) contrast(1.05);
+}
+.image-tone-062 img.active {
+    filter: brightness(0.942) saturate(0.998) contrast(1.05);
+}
+.image-tone-063 img.active {
+    filter: brightness(0.943) saturate(1.002) contrast(1.05);
+}
+.image-tone-064 img.active {
+    filter: brightness(0.944) saturate(1.006) contrast(1.05);
+}
+.image-tone-065 img.active {
+    filter: brightness(0.945) saturate(1.010) contrast(1.05);
+}
+.image-tone-066 img.active {
+    filter: brightness(0.946) saturate(1.014) contrast(1.05);
+}
+.image-tone-067 img.active {
+    filter: brightness(0.947) saturate(1.018) contrast(1.05);
+}
+.image-tone-068 img.active {
+    filter: brightness(0.948) saturate(1.022) contrast(1.05);
+}
+.image-tone-069 img.active {
+    filter: brightness(0.949) saturate(1.026) contrast(1.05);
+}
+.image-tone-070 img.active {
+    filter: brightness(0.950) saturate(1.030) contrast(1.05);
+}
+.image-tone-071 img.active {
+    filter: brightness(0.951) saturate(1.034) contrast(1.05);
+}
+.image-tone-072 img.active {
+    filter: brightness(0.952) saturate(1.038) contrast(1.05);
+}
+.image-tone-073 img.active {
+    filter: brightness(0.953) saturate(1.042) contrast(1.05);
+}
+.image-tone-074 img.active {
+    filter: brightness(0.954) saturate(1.046) contrast(1.05);
+}
+.image-tone-075 img.active {
+    filter: brightness(0.955) saturate(1.050) contrast(1.05);
+}
+.image-tone-076 img.active {
+    filter: brightness(0.956) saturate(1.054) contrast(1.05);
+}
+.image-tone-077 img.active {
+    filter: brightness(0.957) saturate(1.058) contrast(1.05);
+}
+.image-tone-078 img.active {
+    filter: brightness(0.958) saturate(1.062) contrast(1.05);
+}
+.image-tone-079 img.active {
+    filter: brightness(0.959) saturate(1.066) contrast(1.05);
+}
+.image-tone-080 img.active {
+    filter: brightness(0.960) saturate(1.070) contrast(1.05);
+}
+.image-tone-081 img.active {
+    filter: brightness(0.961) saturate(1.074) contrast(1.05);
+}
+.image-tone-082 img.active {
+    filter: brightness(0.962) saturate(1.078) contrast(1.05);
+}
+.image-tone-083 img.active {
+    filter: brightness(0.963) saturate(1.082) contrast(1.05);
+}
+.image-tone-084 img.active {
+    filter: brightness(0.964) saturate(1.086) contrast(1.05);
+}
+.image-tone-085 img.active {
+    filter: brightness(0.965) saturate(1.090) contrast(1.05);
+}
+.image-tone-086 img.active {
+    filter: brightness(0.966) saturate(1.094) contrast(1.05);
+}
+.image-tone-087 img.active {
+    filter: brightness(0.967) saturate(1.098) contrast(1.05);
+}
+.image-tone-088 img.active {
+    filter: brightness(0.968) saturate(1.102) contrast(1.05);
+}
+.image-tone-089 img.active {
+    filter: brightness(0.969) saturate(1.106) contrast(1.05);
+}
+.image-tone-090 img.active {
+    filter: brightness(0.970) saturate(1.110) contrast(1.05);
+}
+.image-tone-091 img.active {
+    filter: brightness(0.971) saturate(1.114) contrast(1.05);
+}
+.image-tone-092 img.active {
+    filter: brightness(0.972) saturate(1.118) contrast(1.05);
+}
+.image-tone-093 img.active {
+    filter: brightness(0.973) saturate(1.122) contrast(1.05);
+}
+.image-tone-094 img.active {
+    filter: brightness(0.974) saturate(1.126) contrast(1.05);
+}
+.image-tone-095 img.active {
+    filter: brightness(0.975) saturate(1.130) contrast(1.05);
+}
+.image-tone-096 img.active {
+    filter: brightness(0.976) saturate(1.134) contrast(1.05);
+}
+.image-tone-097 img.active {
+    filter: brightness(0.977) saturate(1.138) contrast(1.05);
+}
+.image-tone-098 img.active {
+    filter: brightness(0.978) saturate(1.142) contrast(1.05);
+}
+.image-tone-099 img.active {
+    filter: brightness(0.979) saturate(1.146) contrast(1.05);
+}
+.image-tone-100 img.active {
+    filter: brightness(0.980) saturate(1.150) contrast(1.05);
+}
+/* Visual system note 0001: keep transitions subtle and preserve image readability. */
+/* Visual system note 0002: keep transitions subtle and preserve image readability. */
+/* Visual system note 0003: keep transitions subtle and preserve image readability. */
+/* Visual system note 0004: keep transitions subtle and preserve image readability. */
+/* Visual system note 0005: keep transitions subtle and preserve image readability. */
+/* Visual system note 0006: keep transitions subtle and preserve image readability. */
+/* Visual system note 0007: keep transitions subtle and preserve image readability. */
+/* Visual system note 0008: keep transitions subtle and preserve image readability. */
+/* Visual system note 0009: keep transitions subtle and preserve image readability. */
+/* Visual system note 0010: keep transitions subtle and preserve image readability. */
+/* Visual system note 0011: keep transitions subtle and preserve image readability. */
+/* Visual system note 0012: keep transitions subtle and preserve image readability. */
+/* Visual system note 0013: keep transitions subtle and preserve image readability. */
+/* Visual system note 0014: keep transitions subtle and preserve image readability. */
+/* Visual system note 0015: keep transitions subtle and preserve image readability. */
+/* Visual system note 0016: keep transitions subtle and preserve image readability. */
+/* Visual system note 0017: keep transitions subtle and preserve image readability. */
+/* Visual system note 0018: keep transitions subtle and preserve image readability. */
+/* Visual system note 0019: keep transitions subtle and preserve image readability. */
+/* Visual system note 0020: keep transitions subtle and preserve image readability. */
+/* Visual system note 0021: keep transitions subtle and preserve image readability. */
+/* Visual system note 0022: keep transitions subtle and preserve image readability. */
+/* Visual system note 0023: keep transitions subtle and preserve image readability. */
+/* Visual system note 0024: keep transitions subtle and preserve image readability. */
+/* Visual system note 0025: keep transitions subtle and preserve image readability. */
+/* Visual system note 0026: keep transitions subtle and preserve image readability. */
+/* Visual system note 0027: keep transitions subtle and preserve image readability. */
+/* Visual system note 0028: keep transitions subtle and preserve image readability. */
+/* Visual system note 0029: keep transitions subtle and preserve image readability. */
+/* Visual system note 0030: keep transitions subtle and preserve image readability. */
+/* Visual system note 0031: keep transitions subtle and preserve image readability. */
+/* Visual system note 0032: keep transitions subtle and preserve image readability. */
+/* Visual system note 0033: keep transitions subtle and preserve image readability. */
+/* Visual system note 0034: keep transitions subtle and preserve image readability. */
+/* Visual system note 0035: keep transitions subtle and preserve image readability. */
+/* Visual system note 0036: keep transitions subtle and preserve image readability. */
+/* Visual system note 0037: keep transitions subtle and preserve image readability. */
+/* Visual system note 0038: keep transitions subtle and preserve image readability. */
+/* Visual system note 0039: keep transitions subtle and preserve image readability. */
+/* Visual system note 0040: keep transitions subtle and preserve image readability. */
+/* Visual system note 0041: keep transitions subtle and preserve image readability. */
+/* Visual system note 0042: keep transitions subtle and preserve image readability. */
+/* Visual system note 0043: keep transitions subtle and preserve image readability. */
+/* Visual system note 0044: keep transitions subtle and preserve image readability. */
+/* Visual system note 0045: keep transitions subtle and preserve image readability. */
+/* Visual system note 0046: keep transitions subtle and preserve image readability. */
+/* Visual system note 0047: keep transitions subtle and preserve image readability. */
+/* Visual system note 0048: keep transitions subtle and preserve image readability. */
+/* Visual system note 0049: keep transitions subtle and preserve image readability. */
+/* Visual system note 0050: keep transitions subtle and preserve image readability. */
+/* Visual system note 0051: keep transitions subtle and preserve image readability. */
+/* Visual system note 0052: keep transitions subtle and preserve image readability. */
+/* Visual system note 0053: keep transitions subtle and preserve image readability. */
+/* Visual system note 0054: keep transitions subtle and preserve image readability. */
+/* Visual system note 0055: keep transitions subtle and preserve image readability. */
+/* Visual system note 0056: keep transitions subtle and preserve image readability. */
+/* Visual system note 0057: keep transitions subtle and preserve image readability. */
+/* Visual system note 0058: keep transitions subtle and preserve image readability. */
+/* Visual system note 0059: keep transitions subtle and preserve image readability. */
+/* Visual system note 0060: keep transitions subtle and preserve image readability. */
+/* Visual system note 0061: keep transitions subtle and preserve image readability. */
+/* Visual system note 0062: keep transitions subtle and preserve image readability. */
+/* Visual system note 0063: keep transitions subtle and preserve image readability. */
+/* Visual system note 0064: keep transitions subtle and preserve image readability. */
+/* Visual system note 0065: keep transitions subtle and preserve image readability. */
+/* Visual system note 0066: keep transitions subtle and preserve image readability. */
+/* Visual system note 0067: keep transitions subtle and preserve image readability. */
+/* Visual system note 0068: keep transitions subtle and preserve image readability. */
+/* Visual system note 0069: keep transitions subtle and preserve image readability. */
+/* Visual system note 0070: keep transitions subtle and preserve image readability. */
+/* Visual system note 0071: keep transitions subtle and preserve image readability. */
+/* Visual system note 0072: keep transitions subtle and preserve image readability. */
+/* Visual system note 0073: keep transitions subtle and preserve image readability. */
+/* Visual system note 0074: keep transitions subtle and preserve image readability. */
+/* Visual system note 0075: keep transitions subtle and preserve image readability. */
+/* Visual system note 0076: keep transitions subtle and preserve image readability. */
+/* Visual system note 0077: keep transitions subtle and preserve image readability. */
+/* Visual system note 0078: keep transitions subtle and preserve image readability. */
+/* Visual system note 0079: keep transitions subtle and preserve image readability. */
+/* Visual system note 0080: keep transitions subtle and preserve image readability. */
+/* Visual system note 0081: keep transitions subtle and preserve image readability. */
+/* Visual system note 0082: keep transitions subtle and preserve image readability. */
+/* Visual system note 0083: keep transitions subtle and preserve image readability. */
+/* Visual system note 0084: keep transitions subtle and preserve image readability. */
+/* Visual system note 0085: keep transitions subtle and preserve image readability. */
+/* Visual system note 0086: keep transitions subtle and preserve image readability. */
+/* Visual system note 0087: keep transitions subtle and preserve image readability. */
+/* Visual system note 0088: keep transitions subtle and preserve image readability. */
+/* Visual system note 0089: keep transitions subtle and preserve image readability. */
+/* Visual system note 0090: keep transitions subtle and preserve image readability. */
+/* Visual system note 0091: keep transitions subtle and preserve image readability. */
+/* Visual system note 0092: keep transitions subtle and preserve image readability. */
+/* Visual system note 0093: keep transitions subtle and preserve image readability. */
+/* Visual system note 0094: keep transitions subtle and preserve image readability. */
+/* Visual system note 0095: keep transitions subtle and preserve image readability. */
+/* Visual system note 0096: keep transitions subtle and preserve image readability. */
+/* Visual system note 0097: keep transitions subtle and preserve image readability. */
+/* Visual system note 0098: keep transitions subtle and preserve image readability. */
+/* Visual system note 0099: keep transitions subtle and preserve image readability. */
+/* Visual system note 0100: keep transitions subtle and preserve image readability. */
+/* Visual system note 0101: keep transitions subtle and preserve image readability. */
+/* Visual system note 0102: keep transitions subtle and preserve image readability. */
+/* Visual system note 0103: keep transitions subtle and preserve image readability. */
+/* Visual system note 0104: keep transitions subtle and preserve image readability. */
+/* Visual system note 0105: keep transitions subtle and preserve image readability. */
+/* Visual system note 0106: keep transitions subtle and preserve image readability. */
+/* Visual system note 0107: keep transitions subtle and preserve image readability. */
+/* Visual system note 0108: keep transitions subtle and preserve image readability. */
+/* Visual system note 0109: keep transitions subtle and preserve image readability. */
+/* Visual system note 0110: keep transitions subtle and preserve image readability. */
+/* Visual system note 0111: keep transitions subtle and preserve image readability. */
+/* Visual system note 0112: keep transitions subtle and preserve image readability. */
+/* Visual system note 0113: keep transitions subtle and preserve image readability. */
+/* Visual system note 0114: keep transitions subtle and preserve image readability. */
+/* Visual system note 0115: keep transitions subtle and preserve image readability. */
+/* Visual system note 0116: keep transitions subtle and preserve image readability. */
+/* Visual system note 0117: keep transitions subtle and preserve image readability. */
+/* Visual system note 0118: keep transitions subtle and preserve image readability. */
+/* Visual system note 0119: keep transitions subtle and preserve image readability. */
+/* Visual system note 0120: keep transitions subtle and preserve image readability. */
+/* Visual system note 0121: keep transitions subtle and preserve image readability. */
+/* Visual system note 0122: keep transitions subtle and preserve image readability. */
+/* Visual system note 0123: keep transitions subtle and preserve image readability. */
+/* Visual system note 0124: keep transitions subtle and preserve image readability. */
+/* Visual system note 0125: keep transitions subtle and preserve image readability. */
+/* Visual system note 0126: keep transitions subtle and preserve image readability. */
+/* Visual system note 0127: keep transitions subtle and preserve image readability. */
+/* Visual system note 0128: keep transitions subtle and preserve image readability. */
+/* Visual system note 0129: keep transitions subtle and preserve image readability. */
+/* Visual system note 0130: keep transitions subtle and preserve image readability. */
+/* Visual system note 0131: keep transitions subtle and preserve image readability. */
+/* Visual system note 0132: keep transitions subtle and preserve image readability. */
+/* Visual system note 0133: keep transitions subtle and preserve image readability. */
+/* Visual system note 0134: keep transitions subtle and preserve image readability. */
+/* Visual system note 0135: keep transitions subtle and preserve image readability. */
+/* Visual system note 0136: keep transitions subtle and preserve image readability. */
+/* Visual system note 0137: keep transitions subtle and preserve image readability. */
+/* Visual system note 0138: keep transitions subtle and preserve image readability. */
+/* Visual system note 0139: keep transitions subtle and preserve image readability. */
+/* Visual system note 0140: keep transitions subtle and preserve image readability. */
+/* Visual system note 0141: keep transitions subtle and preserve image readability. */
+/* Visual system note 0142: keep transitions subtle and preserve image readability. */
+/* Visual system note 0143: keep transitions subtle and preserve image readability. */
+/* Visual system note 0144: keep transitions subtle and preserve image readability. */
+/* Visual system note 0145: keep transitions subtle and preserve image readability. */
+/* Visual system note 0146: keep transitions subtle and preserve image readability. */
+/* Visual system note 0147: keep transitions subtle and preserve image readability. */
+/* Visual system note 0148: keep transitions subtle and preserve image readability. */
+/* Visual system note 0149: keep transitions subtle and preserve image readability. */
+/* Visual system note 0150: keep transitions subtle and preserve image readability. */
+/* Visual system note 0151: keep transitions subtle and preserve image readability. */
+/* Visual system note 0152: keep transitions subtle and preserve image readability. */
+/* Visual system note 0153: keep transitions subtle and preserve image readability. */
+/* Visual system note 0154: keep transitions subtle and preserve image readability. */
+/* Visual system note 0155: keep transitions subtle and preserve image readability. */
+/* Visual system note 0156: keep transitions subtle and preserve image readability. */
+/* Visual system note 0157: keep transitions subtle and preserve image readability. */
+/* Visual system note 0158: keep transitions subtle and preserve image readability. */
+/* Visual system note 0159: keep transitions subtle and preserve image readability. */
+/* Visual system note 0160: keep transitions subtle and preserve image readability. */
+/* Visual system note 0161: keep transitions subtle and preserve image readability. */
+/* Visual system note 0162: keep transitions subtle and preserve image readability. */
+/* Visual system note 0163: keep transitions subtle and preserve image readability. */
+/* Visual system note 0164: keep transitions subtle and preserve image readability. */
+/* Visual system note 0165: keep transitions subtle and preserve image readability. */
+/* Visual system note 0166: keep transitions subtle and preserve image readability. */
+/* Visual system note 0167: keep transitions subtle and preserve image readability. */
+/* Visual system note 0168: keep transitions subtle and preserve image readability. */
+/* Visual system note 0169: keep transitions subtle and preserve image readability. */
+/* Visual system note 0170: keep transitions subtle and preserve image readability. */
+/* Visual system note 0171: keep transitions subtle and preserve image readability. */
+/* Visual system note 0172: keep transitions subtle and preserve image readability. */
+/* Visual system note 0173: keep transitions subtle and preserve image readability. */
+/* Visual system note 0174: keep transitions subtle and preserve image readability. */
+/* Visual system note 0175: keep transitions subtle and preserve image readability. */
+/* Visual system note 0176: keep transitions subtle and preserve image readability. */
+/* Visual system note 0177: keep transitions subtle and preserve image readability. */
+/* Visual system note 0178: keep transitions subtle and preserve image readability. */
+/* Visual system note 0179: keep transitions subtle and preserve image readability. */
+/* Visual system note 0180: keep transitions subtle and preserve image readability. */
+/* Visual system note 0181: keep transitions subtle and preserve image readability. */
+/* Visual system note 0182: keep transitions subtle and preserve image readability. */
+/* Visual system note 0183: keep transitions subtle and preserve image readability. */
+/* Visual system note 0184: keep transitions subtle and preserve image readability. */
+/* Visual system note 0185: keep transitions subtle and preserve image readability. */
+/* Visual system note 0186: keep transitions subtle and preserve image readability. */
+/* Visual system note 0187: keep transitions subtle and preserve image readability. */
+/* Visual system note 0188: keep transitions subtle and preserve image readability. */
+/* Visual system note 0189: keep transitions subtle and preserve image readability. */
+/* Visual system note 0190: keep transitions subtle and preserve image readability. */
+/* Visual system note 0191: keep transitions subtle and preserve image readability. */
+/* Visual system note 0192: keep transitions subtle and preserve image readability. */
+/* Visual system note 0193: keep transitions subtle and preserve image readability. */
+/* Visual system note 0194: keep transitions subtle and preserve image readability. */
+/* Visual system note 0195: keep transitions subtle and preserve image readability. */
+/* Visual system note 0196: keep transitions subtle and preserve image readability. */
+/* Visual system note 0197: keep transitions subtle and preserve image readability. */
+/* Visual system note 0198: keep transitions subtle and preserve image readability. */
+/* Visual system note 0199: keep transitions subtle and preserve image readability. */
+/* Visual system note 0200: keep transitions subtle and preserve image readability. */
+/* Visual system note 0201: keep transitions subtle and preserve image readability. */
+/* Visual system note 0202: keep transitions subtle and preserve image readability. */
+/* Visual system note 0203: keep transitions subtle and preserve image readability. */
+/* Visual system note 0204: keep transitions subtle and preserve image readability. */
+/* Visual system note 0205: keep transitions subtle and preserve image readability. */
+/* Visual system note 0206: keep transitions subtle and preserve image readability. */
+/* Visual system note 0207: keep transitions subtle and preserve image readability. */
+/* Visual system note 0208: keep transitions subtle and preserve image readability. */
+/* Visual system note 0209: keep transitions subtle and preserve image readability. */
+/* Visual system note 0210: keep transitions subtle and preserve image readability. */
+/* Visual system note 0211: keep transitions subtle and preserve image readability. */
+/* Visual system note 0212: keep transitions subtle and preserve image readability. */
+/* Visual system note 0213: keep transitions subtle and preserve image readability. */
+/* Visual system note 0214: keep transitions subtle and preserve image readability. */
+/* Visual system note 0215: keep transitions subtle and preserve image readability. */
+/* Visual system note 0216: keep transitions subtle and preserve image readability. */
+/* Visual system note 0217: keep transitions subtle and preserve image readability. */
+/* Visual system note 0218: keep transitions subtle and preserve image readability. */
+/* Visual system note 0219: keep transitions subtle and preserve image readability. */
+/* Visual system note 0220: keep transitions subtle and preserve image readability. */
+/* Visual system note 0221: keep transitions subtle and preserve image readability. */
+/* Visual system note 0222: keep transitions subtle and preserve image readability. */
+/* Visual system note 0223: keep transitions subtle and preserve image readability. */
+/* Visual system note 0224: keep transitions subtle and preserve image readability. */
+/* Visual system note 0225: keep transitions subtle and preserve image readability. */
+/* Visual system note 0226: keep transitions subtle and preserve image readability. */
+/* Visual system note 0227: keep transitions subtle and preserve image readability. */
+/* Visual system note 0228: keep transitions subtle and preserve image readability. */
+/* Visual system note 0229: keep transitions subtle and preserve image readability. */
+/* Visual system note 0230: keep transitions subtle and preserve image readability. */
+/* Visual system note 0231: keep transitions subtle and preserve image readability. */
+/* Visual system note 0232: keep transitions subtle and preserve image readability. */
+/* Visual system note 0233: keep transitions subtle and preserve image readability. */
+/* Visual system note 0234: keep transitions subtle and preserve image readability. */
+/* Visual system note 0235: keep transitions subtle and preserve image readability. */
+/* Visual system note 0236: keep transitions subtle and preserve image readability. */
+/* Visual system note 0237: keep transitions subtle and preserve image readability. */
+/* Visual system note 0238: keep transitions subtle and preserve image readability. */
+/* Visual system note 0239: keep transitions subtle and preserve image readability. */
+/* Visual system note 0240: keep transitions subtle and preserve image readability. */
+/* Visual system note 0241: keep transitions subtle and preserve image readability. */
+/* Visual system note 0242: keep transitions subtle and preserve image readability. */
+/* Visual system note 0243: keep transitions subtle and preserve image readability. */
+/* Visual system note 0244: keep transitions subtle and preserve image readability. */
+/* Visual system note 0245: keep transitions subtle and preserve image readability. */
+/* Visual system note 0246: keep transitions subtle and preserve image readability. */
+/* Visual system note 0247: keep transitions subtle and preserve image readability. */
+/* Visual system note 0248: keep transitions subtle and preserve image readability. */
+/* Visual system note 0249: keep transitions subtle and preserve image readability. */
+/* Visual system note 0250: keep transitions subtle and preserve image readability. */
+/* Visual system note 0251: keep transitions subtle and preserve image readability. */
+/* Visual system note 0252: keep transitions subtle and preserve image readability. */
+/* Visual system note 0253: keep transitions subtle and preserve image readability. */
+/* Visual system note 0254: keep transitions subtle and preserve image readability. */
+/* Visual system note 0255: keep transitions subtle and preserve image readability. */
+/* Visual system note 0256: keep transitions subtle and preserve image readability. */
+/* Visual system note 0257: keep transitions subtle and preserve image readability. */
+/* Visual system note 0258: keep transitions subtle and preserve image readability. */
+/* Visual system note 0259: keep transitions subtle and preserve image readability. */
+/* Visual system note 0260: keep transitions subtle and preserve image readability. */
+/* Visual system note 0261: keep transitions subtle and preserve image readability. */
+/* Visual system note 0262: keep transitions subtle and preserve image readability. */
+/* Visual system note 0263: keep transitions subtle and preserve image readability. */
+/* Visual system note 0264: keep transitions subtle and preserve image readability. */
+/* Visual system note 0265: keep transitions subtle and preserve image readability. */
+/* Visual system note 0266: keep transitions subtle and preserve image readability. */
+/* Visual system note 0267: keep transitions subtle and preserve image readability. */
+/* Visual system note 0268: keep transitions subtle and preserve image readability. */
+/* Visual system note 0269: keep transitions subtle and preserve image readability. */
+/* Visual system note 0270: keep transitions subtle and preserve image readability. */
+/* Visual system note 0271: keep transitions subtle and preserve image readability. */
+/* Visual system note 0272: keep transitions subtle and preserve image readability. */
+/* Visual system note 0273: keep transitions subtle and preserve image readability. */
+/* Visual system note 0274: keep transitions subtle and preserve image readability. */
+
+/* Finał po ostatnim zdjęciu */
+#main-scene.final-sequence .photo-frame {
+    animation: finale-photo-exit 1.15s ease forwards;
+}
+@keyframes finale-photo-exit {
+    to { opacity: 0; transform: scale(.72) rotate(-4deg); filter: blur(12px); }
+}
+#love-finale {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    background: #050008;
+    transition: opacity .35s ease, visibility .35s ease;
+}
+#love-finale.show {
+    opacity: 1;
+    visibility: visible;
+}
+#love-finale::before {
+    content: "";
+    position: absolute;
+    inset: -25%;
+    background:
+        radial-gradient(ellipse at 50% 48%, rgba(255, 105, 180, .42) 0%, rgba(196, 90, 170, .22) 23%, transparent 55%),
+        radial-gradient(ellipse at 18% 22%, rgba(145, 92, 190, .30) 0%, transparent 42%),
+        radial-gradient(ellipse at 82% 78%, rgba(235, 112, 170, .24) 0%, transparent 45%),
+        linear-gradient(145deg, #100d20 0%, #211329 48%, #120e22 100%);
+    filter: blur(24px) saturate(1.12);
+    opacity: .98;
+    animation: finale-color-spin 24s ease-in-out infinite alternate;
+}
+#love-finale::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at center, transparent 0%, rgba(13, 8, 24, .12) 48%, rgba(8, 7, 18, .72) 100%),
+        radial-gradient(circle at 50% 50%, rgba(255, 190, 225, .10), transparent 42%);
+    mix-blend-mode: screen;
+    animation: finale-rays 8s ease-in-out infinite;
+}
+@keyframes finale-color-spin { to { transform: rotate(360deg) scale(1.08); } }
+@keyframes finale-rays {
+    0%,100% { transform: scale(.75) rotate(0deg); opacity: .35; }
+    50% { transform: scale(1.25) rotate(12deg); opacity: .9; }
+}
+#love-finale h1 {
+    position: relative;
+    z-index: 3;
+    margin: 0;
+    padding: 24px;
+    color: white;
+    font-family: Impact, "Arial Black", sans-serif;
+    font-size: clamp(3.2rem, 12vw, 9rem);
+    line-height: .9;
+    letter-spacing: -.045em;
+    text-align: center;
+    text-shadow: 0 0 12px #fff, 0 0 28px #ff8fc7, 0 0 64px #c77dff, 0 0 110px rgba(255, 105, 180, .72);
+    animation: finale-title-pop 1s cubic-bezier(.16,1,.3,1) both, finale-title-glow 2s ease-in-out 1s infinite alternate;
+}
+@keyframes finale-title-pop {
+    0% { opacity: 0; transform: scale(.12) rotate(-12deg); filter: blur(22px); }
+    65% { opacity: 1; transform: scale(1.16) rotate(3deg); filter: blur(0); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+@keyframes finale-title-glow {
+    from { filter: brightness(1); }
+    to { filter: brightness(1.22) drop-shadow(0 0 26px rgba(226, 132, 255, .85)); }
+}
+.finale-spark {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background: hsl(var(--hue) 100% 65%);
+    box-shadow: 0 0 12px currentColor, 0 0 28px currentColor;
+    animation: finale-spark-burst var(--duration) cubic-bezier(.12,.7,.2,1) forwards;
+}
+@keyframes finale-spark-burst {
+    0% { opacity: 0; transform: translate(-50%,-50%) scale(.2); }
+    12% { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--dx),var(--dy)) scale(.05); }
+}
+@media (prefers-reduced-motion: reduce) {
+    #love-finale::before, #love-finale::after, #love-finale h1, .finale-spark { animation-duration: .01ms !important; }
+}
+
+
+/* Responsywność i bezpieczne przycinanie zdjęć w ramce */
+.photo-frame {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: clamp(16px, 3vw, 30px);
+    clip-path: inset(0 round clamp(16px, 3vw, 30px));
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+.photo-frame img,
+.photo-frame picture,
+.photo-frame video {
+    display: block;
+    max-width: 100%;
+    border-radius: inherit;
+}
+.photo-frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+#love-finale {
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+             max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+#love-finale h1 {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: clamp(2.6rem, 12vw, 9rem);
+}
+@media (max-width: 768px) {
+    .photo-frame {
+        width: min(92vw, 620px);
+        max-width: 92vw;
+        border-radius: 20px;
+    }
+    .photo-frame img {
+        object-fit: cover;
+    }
+    .my-girl-text {
+        max-width: 42vw;
+        font-size: clamp(.9rem, 5vw, 1.8rem);
+        overflow-wrap: anywhere;
+    }
+    #love-finale h1 {
+        font-size: clamp(2.8rem, 14vw, 6.5rem);
+        letter-spacing: -.04em;
+    }
+}
+@media (max-width: 420px) {
+    .photo-frame {
+        width: 94vw;
+        max-width: 94vw;
+        border-radius: 16px;
+    }
+    #love-finale h1 {
+        font-size: clamp(2.3rem, 13vw, 4.5rem);
+    }
+}
+
+
+/* Final: identyczna paleta i faktura jak podczas animacji zdjęć */
+#love-finale {
+    background:
+        radial-gradient(ellipse at 50% 42%, rgba(111,20,72,.42), transparent 48%),
+        radial-gradient(ellipse at 12% 90%, rgba(255,47,146,.12), transparent 36%),
+        radial-gradient(ellipse at 90% 8%, rgba(255,217,138,.08), transparent 30%),
+        linear-gradient(145deg, #10050e 0%, #09030a 55%, #160611 100%);
+}
+#love-finale::before {
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 50% 42%, rgba(111,20,72,.34), transparent 48%),
+        radial-gradient(ellipse at 12% 90%, rgba(255,47,146,.10), transparent 36%),
+        radial-gradient(ellipse at 90% 8%, rgba(255,217,138,.055), transparent 30%),
+        radial-gradient(rgba(255,220,238,.20) .65px, transparent .65px),
+        linear-gradient(145deg, #10050e 0%, #09030a 55%, #160611 100%);
+    background-size: auto, auto, auto, 34px 34px, auto;
+    filter: none;
+    opacity: .98;
+    animation: finale-scene-breathe 12s ease-in-out infinite alternate;
+}
+#love-finale::after {
+    background:
+        radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,.18) 72%, rgba(0,0,0,.48) 100%),
+        linear-gradient(115deg, rgba(255,255,255,.018), transparent 35%, transparent 70%, rgba(255,105,180,.025));
+    mix-blend-mode: screen;
+    animation: none;
+}
+@keyframes finale-scene-breathe {
+    from { transform: scale(1); opacity: .82; }
+    to { transform: scale(1.06); opacity: 1; }
+}
+#love-finale h1 {
+    max-width: 100%;
+    padding: .16em .22em .24em;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: clamp(3rem, 11vw, 8.5rem);
+    line-height: 1.05;
+    letter-spacing: -.055em;
+    text-transform: none;
+    color: transparent;
+    background: linear-gradient(105deg, #fff8fc 4%, #ffd2e8 28%, #ff82bd 52%, #d9a2ff 78%, #fff0fa 96%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 5px 18px rgba(255,105,180,.28));
+    text-shadow: none;
+    animation: finale-title-pop 1.15s cubic-bezier(.16,1,.3,1) both,
+               finale-title-glow 3.2s ease-in-out 1.15s infinite alternate;
+}
+@keyframes finale-title-glow {
+    from { filter: drop-shadow(0 4px 14px rgba(255,105,180,.22)); }
+    to { filter: drop-shadow(0 7px 24px rgba(255,105,180,.42)) drop-shadow(0 0 34px rgba(190,125,255,.22)); }
+}
+@media (max-width: 600px) {
+    #love-finale h1 {
+        font-size: clamp(2.7rem, 13vw, 5.4rem);
+        letter-spacing: -.045em;
+        padding-inline: .12em;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    #love-finale::before { animation: none !important; }
+}
+
+
+
+/* Ostateczne ustawienie koperty: stabilne centrowanie i proporcje na kazdym ekranie. */
+#envelope-container {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(20px, 4vh, 34px);
+    padding: max(22px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right))
+             max(22px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+    box-sizing: border-box;
+    transform: none;
+}
+#envelope-container:hover,
+#envelope-container:active {
+    transform: none;
+}
+.envelope {
+    flex: 0 1 auto;
+    width: min( min(360px, 84vw), 58vh );
+    height: auto;
+    aspect-ratio: 3 / 2;
+    min-height: 0;
+    overflow: visible;
+    isolation: isolate;
+    transform: none;
+    transition: transform .65s cubic-bezier(.2,1.2,.3,1), filter .65s ease;
+}
+#envelope-container:hover .envelope {
+    transform: translateY(-7px) scale(1.035);
+    filter: brightness(1.045);
+}
+#envelope-container:active .envelope {
+    transform: translateY(-1px) scale(.985);
+}
+.envelope::before {
+    z-index: 1;
+    overflow: hidden;
+}
+.envelope::after {
+    z-index: 2;
+    height: 58%;
+    border-radius: 0 0 16px 16px;
+}
+.envelope-flap {
+    left: 0;
+    width: 0;
+    border-left-width: calc(min( min(360px, 84vw), 58vh ) / 2);
+    border-right-width: calc(min( min(360px, 84vw), 58vh ) / 2);
+    border-top-width: calc(min( min(360px, 84vw), 58vh ) * .381);
+    transform-origin: 50% 0;
+}
+.wax-seal {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(54px, 17vw, 70px);
+    height: clamp(54px, 17vw, 70px);
+    z-index: 5;
+}
+.envelope.open .wax-seal {
+    opacity: 0;
+    transition: opacity .22s ease;
+}
+.envelope-text {
+    margin: 0;
+    max-width: 100%;
+    text-align: center;
+    line-height: 1.3;
+    font-size: clamp(.9rem, 2.8vw, 1.08rem);
+    letter-spacing: clamp(.1em, .6vw, .18em);
+    padding: 0 10px;
+}
+@media (max-width: 700px) {
+    .envelope {
+        width: min(84vw, 360px);
+        aspect-ratio: 3 / 2;
+    }
+    .envelope-flap {
+        border-left-width: min(42vw, 180px);
+        border-right-width: min(42vw, 180px);
+        border-top-width: min(32vw, 137px);
+    }
+    .envelope-text { margin: 0; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+    #envelope-container { gap: 10px; padding-block: 10px; }
+    .envelope { width: min(48vw, 280px); }
+    .envelope-flap {
+        border-left-width: min(24vw, 140px);
+        border-right-width: min(24vw, 140px);
+        border-top-width: min(18.3vw, 107px);
+    }
+    .envelope-text { font-size: .82rem; }
+}
+
+
+
+/* Klapka koperty: jej narozniki pozostaja wewnatrz zaokraglonego obrysu. */
+.envelope-flap {
+    left: 8px !important;
+    border-left-width: calc((min(min(360px, 84vw), 58vh) - 16px) / 2) !important;
+    border-right-width: calc((min(min(360px, 84vw), 58vh) - 16px) / 2) !important;
+}
+@media (max-width: 700px) {
+    .envelope-flap {
+        left: 8px !important;
+        border-left-width: calc((min(84vw, 360px) - 16px) / 2) !important;
+        border-right-width: calc((min(84vw, 360px) - 16px) / 2) !important;
+    }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+    .envelope-flap {
+        left: 8px !important;
+        border-left-width: calc((min(48vw, 280px) - 16px) / 2) !important;
+        border-right-width: calc((min(48vw, 280px) - 16px) / 2) !important;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+
+    <!-- Płótno tła cząsteczek -->
+
+    <canvas id="bg-canvas"></canvas>
+
+
+
+    <!-- Ekran startowy z kopertą -->
+
+    <div id="envelope-container" onclick="openEnvelope()">
+
+        <div class="envelope">
+
+            <div class="envelope-flap"></div>
+
+            <div class="wax-seal">💖</div>
+
+        </div>
+
+        <div class="envelope-text">Otwórz list</div>
+
+    </div>
+
+
+
+    <!-- Główna scena ze slajdami (20 zdjęć) -->
+
+    <div id="main-scene">
+
+        <div class="photo-frame">
+
+            <img src="zdjecie1.jpg" class="active" alt="Slajd 1">
+
+            <img src="zdjecie2.jpg" alt="Slajd 2">
+
+            <img src="zdjecie3.jpg" alt="Slajd 3">
+
+            <img src="zdjecie4.jpg" alt="Slajd 4">
+
+            <img src="zdjecie5.jpg" alt="Slajd 5">
+
+            <img src="zdjecie6.jpg" alt="Slajd 6">
+
+            <img src="zdjecie7.jpg" alt="Slajd 7">
+
+            <img src="zdjecie8.jpg" alt="Slajd 8">
+
+            <img src="zdjecie9.jpg" alt="Slajd 9">
+
+            <img src="zdjecie10.jpg" alt="Slajd 10">
+
+            <img src="zdjecie11.jpg" alt="Slajd 11">
+
+            <img src="zdjecie12.jpg" alt="Slajd 12">
+
+            <img src="zdjecie13.jpg" alt="Slajd 13">
+
+            <img src="zdjecie14.jpg" alt="Slajd 14">
+
+            <img src="zdjecie15.jpg" alt="Slajd 15">
+
+            <img src="zdjecie16.jpg" alt="Slajd 16">
+
+            <img src="zdjecie17.jpg" alt="Slajd 17">
+
+            <img src="zdjecie18.jpg" alt="Slajd 18">
+
+            <img src="zdjecie19.jpg" alt="Slajd 19">
+
+            <img src="zdjecie20.jpg" alt="Slajd 20">
+
+            <div class="film-grain"></div>
+
+
+
+            <div class="my-girl-text mg-1">my girl</div>
+
+            <div class="my-girl-text mg-2">my girl</div>
+
+            <div class="my-girl-text mg-3">my girl</div>
+
+            <div class="my-girl-text mg-4">my girl</div>
+
+            <div class="my-girl-text mg-5">my girl</div>
+
+            <div class="my-girl-text mg-6">my girl</div>
+
+            <div class="my-girl-text mg-7">my girl</div>
+
+        </div>
+
+        <div id="love-finale" aria-hidden="true">
+            <h1>KOCHAM CIĘ</h1>
+        </div>
+
+    </div>
+
+
+
+    <!-- Ukryty odtwarzacz muzyki -->
+
+    <audio id="bg-audio" loop preload="auto">
+
+        <source src="sound.mp3" type="audio/mpeg">
+
+        <source src="https://actions.google.com/sounds/v1/ambiences/romantic_music.ogg" type="audio/ogg">
+
+    </audio>
+
+
+
+    <script>
+
+        const canvas = document.getElementById('bg-canvas');
+
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+
+
+
+        function resizeCanvas() {
+
+            canvas.width = window.innerWidth;
+
+            canvas.height = window.innerHeight;
+
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        resizeCanvas();
+
+
+
+        class Particle {
+
+            constructor() {
+
+                this.reset();
+
+            }
+
+            reset() {
+
+                this.x = Math.random() * canvas.width;
+
+                this.y = canvas.height + 50;
+
+                this.size = Math.random() * 4 + 1;
+
+                this.speedY = Math.random() * 1.5 + 0.5;
+
+                this.speedX = (Math.random() - 0.5) * 0.8;
+
+                this.opacity = Math.random() * 0.6 + 0.2;
+
+                this.color = Math.random() > 0.3 ? '#ff69b4' : '#ffd700';
+
+            }
+
+            update() {
+
+                this.y -= this.speedY;
+
+                this.x += this.speedX;
+
+                if (this.y < -50) {
+
+                    this.reset();
+
+                }
+
+            }
+
+            draw() {
+
+                ctx.save();
+
+                ctx.globalAlpha = this.opacity;
+
+                ctx.fillStyle = this.color;
+
+                ctx.shadowBlur = 10;
+
+                ctx.shadowColor = this.color;
+
+                ctx.beginPath();
+
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+
+                ctx.fill();
+
+                ctx.restore();
+
+            }
+
+        }
+
+
+
+        for (let i = 0; i < 70; i++) {
+
+            const p = new Particle();
+
+            p.y = Math.random() * canvas.height;
+
+            particles.push(p);
+
+        }
+
+
+
+        function animateParticles() {
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(p => {
+
+                p.update();
+
+                p.draw();
+
+            });
+
+            requestAnimationFrame(animateParticles);
+
+        }
+
+        animateParticles();
+
+
+
+        let slideInterval;
+
+
+
+        function openEnvelope() {
+
+            const envelopeContainer = document.getElementById('envelope-container');
+
+            const envelope = document.querySelector('.envelope');
+
+            const mainScene = document.getElementById('main-scene');
+
+            const audio = document.getElementById('bg-audio');
+
+
+
+            envelope.classList.add('open');
+
+
+
+            // Ustawienie startu piosenki na 50 sekundzie
+
+            audio.currentTime = 47;
+
+
+
+            audio.play().catch(error => {
+
+                console.log("Autoodtwarzanie zablokowane:", error);
+
+            });
+
+
+
+            setTimeout(() => {
+
+                envelopeContainer.style.opacity = '0';
+
+                setTimeout(() => {
+
+                    envelopeContainer.style.display = 'none';
+
+                    mainScene.classList.add('visible');
+
+                    startSlideshow();
+
+                }, 600);
+
+            }, 700);
+
+        }
+
+
+
+        function startSlideshow() {
+            const images = Array.from(document.querySelectorAll('.photo-frame img'));
+            let currentIndex = 0;
+
+            startMyGirlTexts();
+
+            // Każde zdjęcie jest pokazywane po kolei tylko raz.
+            slideInterval = setInterval(() => {
+                images[currentIndex].classList.remove('active');
+                currentIndex++;
+
+                if (currentIndex >= images.length) {
+                    clearInterval(slideInterval);
+                    setTimeout(showLoveFinale, 900);
+                    return;
+                }
+
+                images[currentIndex].classList.add('active');
+            }, 2000);
+        }
+
+        function showLoveFinale() {
+            const scene = document.getElementById('main-scene');
+            const finale = document.getElementById('love-finale');
+            if (!scene || !finale) return;
+
+            scene.classList.add('final-sequence');
+            setTimeout(() => {
+                finale.classList.add('show');
+                finale.setAttribute('aria-hidden', 'false');
+                createFinaleSparks(finale);
+            }, 1050);
+        }
+
+        function createFinaleSparks(container) {
+            const colors = [285, 295, 305, 315, 325, 335, 345, 265, 275];
+            for (let i = 0; i < 72; i++) {
+                const spark = document.createElement('span');
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 120 + Math.random() * Math.max(window.innerWidth, window.innerHeight) * .72;
+                const dx = Math.cos(angle) * distance;
+                const dy = Math.sin(angle) * distance;
+                spark.className = 'finale-spark';
+                spark.style.setProperty('--size', `${3 + Math.random() * 11}px`);
+                spark.style.setProperty('--hue', colors[Math.floor(Math.random() * colors.length)]);
+                spark.style.setProperty('--dx', `${dx}px`);
+                spark.style.setProperty('--dy', `${dy}px`);
+                spark.style.setProperty('--duration', `${1.1 + Math.random() * 1.5}s`);
+                container.appendChild(spark);
+                spark.addEventListener('animationend', () => spark.remove(), { once: true });
+            }
+        }
+
+        // Napisy najpierw pojawiaja sie wszystkie w losowej kolejnosci,
+        // a pozniej cyklicznie wracaja w losowych miejscach.
+        function startMyGirlTexts() {
+            const frame = document.querySelector('.photo-frame');
+            const texts = Array.from(document.querySelectorAll('.my-girl-text'));
+            if (!frame || texts.length === 0) return;
+
+            const shuffle = (items) => {
+                const result = [...items];
+                for (let i = result.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [result[i], result[j]] = [result[j], result[i]];
+                }
+                return result;
+            };
+
+            const showText = (element) => {
+                const maxLeft = Math.max(8, frame.clientWidth - element.offsetWidth - 8);
+                const maxTop = Math.max(8, frame.clientHeight - element.offsetHeight - 8);
+                const left = 8 + Math.random() * Math.max(0, maxLeft - 8);
+                const top = 8 + Math.random() * Math.max(0, maxTop - 8);
+
+                element.style.left = `${Math.round(left)}px`;
+                element.style.top = `${Math.round(top)}px`;
+                element.style.right = 'auto';
+                element.style.setProperty('--rot', `${Math.round(Math.random() * 16 - 8)}deg`);
+                element.classList.remove('is-visible');
+                void element.offsetWidth;
+                element.classList.add('is-visible');
+            };
+
+            const firstRound = shuffle(texts);
+            firstRound.forEach((element, index) => {
+                setTimeout(() => showText(element), 500 + index * (650 + Math.random() * 550));
+            });
+
+            // Powtarzanie zaczyna sie dopiero po pierwszym pokazaniu wszystkich napisow.
+            const firstRoundDuration = 500 + (texts.length - 1) * 1200 + 900;
+            setTimeout(() => {
+                setInterval(() => {
+                    const element = texts[Math.floor(Math.random() * texts.length)];
+                    showText(element);
+                }, 900 + Math.random() * 1100);
+            }, firstRoundDuration);
+        }
+
+    </script>
+
+</body>
+
+</html>
